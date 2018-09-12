@@ -1,6 +1,6 @@
 module Main where
 
-import API.API
+import Server (run)
 
 main :: IO ()
 main = run

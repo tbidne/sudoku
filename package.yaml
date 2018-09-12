@@ -50,13 +50,26 @@ executables:
     - warp
 
 tests:
-  sudoku-test:
-    main:                Spec.hs
-    source-dirs:         test
+  spec:
+    main: Spec.hs
+    source-dirs: test/spec
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - hspec
+    - sudoku
+    - servant-server
+  inttest:
+    main: Spec.hs
+    source-dirs: test/inttest
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hspec
+    - process
     - sudoku
     - servant-server
