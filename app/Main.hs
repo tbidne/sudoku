@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import API.API
 
 main :: IO ()
-main = someFunc
+main = run

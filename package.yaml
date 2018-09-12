@@ -24,17 +24,30 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+    - servant
+    - servant-server
+    - aeson
+    - wai
+    - warp
 
 executables:
   sudoku-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs:
+    - app
+    - src
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - sudoku
+    - servant
+    - servant-server
+    - aeson
+    - wai
+    - warp
 
 tests:
   sudoku-test:
@@ -46,3 +59,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - sudoku
+    - servant-server
