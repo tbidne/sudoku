@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Domain
-( Table(..)
+( Grid(..)
 , Cell(..)
 )
 where
@@ -9,20 +9,20 @@ where
 import qualified GHC.Generics as Generics (Generic)
 import qualified Data.Aeson as Aeson (FromJSON, ToJSON)
 
-data Table
-  = Table {
-    tableId :: Integer,
+data Grid
+  = Grid {
+    gridId :: Integer,
     cells :: [[Cell]],
     isSolved :: Bool
   }
   deriving (Eq, Show, Generics.Generic)
 
-instance Aeson.ToJSON Table
-instance Aeson.FromJSON Table
+instance Aeson.ToJSON Grid
+instance Aeson.FromJSON Grid
 
 data Cell
   = Cell {
-    id :: Integer,
+    cellId :: Integer,
     row :: Int,
     col :: Int,
     realValue :: Int,

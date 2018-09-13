@@ -2,35 +2,35 @@
 
 module Service
 ( health
-, initTable
-, getTables
-, getTableById
+, initGrid
+, getGrids
+, getGridById
 )
 where
 
 import qualified Servant (err404, Handler, throwError)
-import qualified Domain (Cell(..), Table(..))
+import qualified Domain (Cell(..), Grid(..))
 
 health :: Servant.Handler String
 health = return "Sudoku is up!"
 
-initTable :: Servant.Handler Domain.Table
-initTable = return blankTable
+initGrid :: Servant.Handler Domain.Grid
+initGrid = return blankGrid
 
-getTables :: Servant.Handler [Domain.Table]
-getTables = return [exampleTable]
+getGrids :: Servant.Handler [Domain.Grid]
+getGrids = return [exampleGrid]
 
-getTableById :: Integer -> Servant.Handler Domain.Table
-getTableById = \ case
-  0 -> return exampleTable
+getGridById :: Integer -> Servant.Handler Domain.Grid
+getGridById = \ case
+  0 -> return exampleGrid
   _ -> Servant.throwError Servant.err404
 
-blankTable :: Domain.Table
-blankTable = Domain.Table 0 cells False
+blankGrid :: Domain.Grid
+blankGrid = Domain.Grid 0 cells False
   where cells = (replicate 9 . replicate 9) exampleCell
 
-exampleTable :: Domain.Table
-exampleTable = Domain.Table 0 [] False
+exampleGrid :: Domain.Grid
+exampleGrid = Domain.Grid 0 [] False
 
 exampleCell :: Domain.Cell
 exampleCell = Domain.Cell 0 0 0 0 0 False
