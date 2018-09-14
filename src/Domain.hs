@@ -11,7 +11,7 @@ import qualified Data.Aeson as Aeson (FromJSON, ToJSON)
 
 data Grid
   = Grid {
-    gridId :: Integer,
+    gridId :: Int,
     cells :: [[Cell]],
     isSolved :: Bool
   }
@@ -22,7 +22,7 @@ instance Aeson.FromJSON Grid
 
 data Cell
   = Cell {
-    cellId :: Integer,
+    cellId :: Int,
     row :: Int,
     col :: Int,
     realValue :: Int,

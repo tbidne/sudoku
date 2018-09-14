@@ -1,10 +1,10 @@
 name:                sudoku
 version:             0.1.0.0
-github:              "githubuser/sudoku"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2018 Author name here"
+github:              "tbidne/sudoku"
+license:             MIT
+author:              "Thomas Bidne"
+maintainer:          "tbidne@gmail.com"
+copyright:           "2018 Thomas Bidne"
 
 extra-source-files:
 - README.md
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/sudoku#readme>
+description:         Please see the README on GitHub at <https://github.com/tbidne/sudoku#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -25,9 +25,10 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+    - aeson
+    - postgresql-simple
     - servant
     - servant-server
-    - aeson
     - wai
     - warp
 
@@ -42,10 +43,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - sudoku
+    - aeson
+    - postgresql-simple
     - servant
     - servant-server
-    - aeson
     - wai
     - warp
 
