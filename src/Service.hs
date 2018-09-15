@@ -10,7 +10,7 @@ where
 import qualified Servant (err404, Handler, throwError)
 import qualified Domain (Cell(..), Grid(..))
 import qualified Database.PostgreSQL.Simple as Postgres (Connection)
-import qualified Database as DB (getGridById, saveGrid, GridT(..))
+import qualified Database as DB (deleteGrid, getGridById, saveGrid, GridT(..))
 import Control.Monad.IO.Class
 import Data.Int
 
@@ -33,8 +33,8 @@ getGridById conn id = do
 saveGrid :: Postgres.Connection -> Integer -> Domain.Grid -> Servant.Handler Int64
 saveGrid conn id grid = liftIO $ DB.saveGrid conn id grid
 
-deleteGrid :: Postgres.Connection -> Integer -> Servant.Handler Domain.Grid
-deleteGrid conn id = return exampleGrid
+deleteGrid :: Postgres.Connection -> Integer -> Servant.Handler Int64
+deleteGrid conn id = liftIO $ DB.deleteGrid conn id
 
 -- Internal
 

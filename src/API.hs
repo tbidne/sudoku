@@ -23,7 +23,7 @@ type SudokuApi =
   "grid" :> Get '[Servant.JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> Get '[JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Int64 :<|>
-  "grid" :> Capture "gridId" Integer :> Delete '[JSON] Domain.Grid
+  "grid" :> Capture "gridId" Integer :> Delete '[JSON] Int64
 
 sudokuApi :: Proxy.Proxy SudokuApi
 sudokuApi = Proxy.Proxy

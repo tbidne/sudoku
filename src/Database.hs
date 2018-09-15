@@ -2,7 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Database
-( getGridById
+( deleteGrid
+, getGridById
 , saveGrid
 , GridT(..)
 )
@@ -46,5 +47,5 @@ saveGrid :: Postgres.Connection -> Integer -> Domain.Grid -> IO Int64
 saveGrid conn id grid = Postgres.execute conn "UPDATE grid SET solved = ? WHERE id = ?" (solved, id)
   where solved = False
 
-deleteGrid :: Postgres.Connection -> Integer -> IO [GridT]
-deleteGrid conn id = Postgres.query conn "UPDATE * FROM grid WHERE grid.id = ?" [id]
+deleteGrid :: Postgres.Connection -> Integer -> IO Int64
+deleteGrid conn id = Postgres.execute conn "DELETE FROM grid WHERE id = ?" [id]
