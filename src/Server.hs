@@ -8,10 +8,9 @@ import Servant ((:<|>)(..))
 import qualified Servant (Application, serve, Server)
 import           System.IO
 import qualified Service (health, getGridById, initGrid, saveGrid, deleteGrid)
-
 import qualified Database.PostgreSQL.Simple as Postgres (connect, ConnectInfo(..), Connection)
-
 import qualified API (SudokuApi, sudokuApi)
+import Control.Exception (try, SomeException)
 
 run :: IO ()
 run = do
@@ -20,8 +19,10 @@ run = do
         Warp.setPort port $
         Warp.setBeforeMainLoop (hPutStrLn stderr ("listening on port " ++ show port)) 
         Warp.defaultSettings
-  conn <- getDbConnection
-  Warp.runSettings settings =<< mkApp conn
+  attempt <- try getDbConnection :: IO (Either SomeException Postgres.Connection)
+  case attempt of
+    Left ex -> putStrLn "Failed to connect to db, closing"
+    Right conn -> Warp.runSettings settings =<< mkApp conn
 
 mkApp :: Postgres.Connection -> IO Servant.Application
 mkApp conn = return $ Servant.serve API.sudokuApi $ server conn
