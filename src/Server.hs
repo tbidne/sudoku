@@ -4,9 +4,12 @@ module Server
 where
 
 import qualified Network.Wai.Handler.Warp as Warp (defaultSettings, runSettings, setBeforeMainLoop, setPort)
-import qualified Servant ((:<|>)(..), Application, serve, Server)
+import Servant ((:<|>)(..))
+import qualified Servant (Application, serve, Server)
 import           System.IO
-import qualified Service (health, getGrids, getGridById, initGrid)
+import qualified Service (health, getGridById, initGrid, saveGrid, deleteGrid)
+
+import qualified Database.PostgreSQL.Simple as Postgres (connect, ConnectInfo(..), Connection)
 
 import qualified API (SudokuApi, sudokuApi)
 
@@ -17,14 +20,22 @@ run = do
         Warp.setPort port $
         Warp.setBeforeMainLoop (hPutStrLn stderr ("listening on port " ++ show port)) 
         Warp.defaultSettings
-  Warp.runSettings settings =<< mkApp
+  conn <- getDbConnection
+  Warp.runSettings settings =<< mkApp conn
 
-mkApp :: IO Servant.Application
-mkApp = return $ Servant.serve API.sudokuApi server
+mkApp :: Postgres.Connection -> IO Servant.Application
+mkApp conn = return $ Servant.serve API.sudokuApi $ server conn
 
-server :: Servant.Server API.SudokuApi
-server =
-  Service.health Servant.:<|>
-  Service.initGrid Servant.:<|>
-  Service.getGrids Servant.:<|>
-  Service.getGridById
+server :: Postgres.Connection -> Servant.Server API.SudokuApi
+server conn =
+  Service.health :<|>
+  Service.initGrid :<|>
+  Service.getGridById conn :<|>
+  Service.saveGrid conn :<|>
+  Service.deleteGrid conn
+
+myConnectInfo :: Postgres.ConnectInfo
+myConnectInfo = Postgres.ConnectInfo "localhost" 5432 "postgres" "" "sudoku"
+
+getDbConnection :: IO Postgres.Connection
+getDbConnection = Postgres.connect myConnectInfo

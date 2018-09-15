@@ -1,11 +1,18 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Database where
+module Database
+( getGridById
+, saveGrid
+, GridT(..)
+)
+where
 
 import qualified GHC.Generics as Generics (Generic)
-import qualified Database.PostgreSQL.Simple as Postgres
+import qualified Database.PostgreSQL.Simple as Postgres (Connection, execute, query, query_)
 import qualified Database.PostgreSQL.Simple.FromRow as FR (field, fromRow, FromRow)
+import qualified Domain (Grid(..))
+import Data.Int
 
 data GridT =
   GridT {
@@ -32,14 +39,12 @@ data CellT =
 instance FR.FromRow CellT where
   fromRow = CellT <$> FR.field <*> FR.field <*> FR.field <*> FR.field <*> FR.field <*> FR.field <*> FR.field
 
-allGrids :: Postgres.Connection -> IO [GridT]
-allGrids c = Postgres.query_ c "SELECT * FROM grid"
+getGridById :: Postgres.Connection -> Integer -> IO [GridT]
+getGridById conn id = Postgres.query conn "SELECT * FROM grid WHERE grid.id = ?" [id]
 
-allCells :: Postgres.Connection -> IO [CellT]
-allCells c = Postgres.query_ c "SELECT * FROM cell"
+saveGrid :: Postgres.Connection -> Integer -> Domain.Grid -> IO Int64
+saveGrid conn id grid = Postgres.execute conn "UPDATE grid SET solved = ? WHERE id = ?" (solved, id)
+  where solved = False
 
-myConnectInfo :: Postgres.ConnectInfo
-myConnectInfo = Postgres.ConnectInfo "localhost" 5432 "postgres" "" "sudoku"
-
-getConnection :: IO Postgres.Connection
-getConnection = Postgres.connect myConnectInfo
+deleteGrid :: Postgres.Connection -> Integer -> IO [GridT]
+deleteGrid conn id = Postgres.query conn "UPDATE * FROM grid WHERE grid.id = ?" [id]
