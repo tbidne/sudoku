@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP TABLE cell CASCADE;
+DROP TABLE grid;
+
+COMMIT;

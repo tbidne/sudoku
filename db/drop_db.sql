@@ -1,7 +1,1 @@
-BEGIN;
-
-DROP TABLE cell CASCADE;
-DROP TABLE grid;
---DROP DATABASE sudoku;
-
-COMMIT;
+DROP DATABASE sudoku;
