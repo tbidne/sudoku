@@ -13,7 +13,7 @@ spec = do
   describe "Simple health check" $ do
     it "should curl the application" $ do
       process <- Process.spawnCommand "stack exec sudoku-exe"
-      Process.callCommand "sleep 2"
+      Process.callCommand "sleep 5"
       (errCode, stdout', stderr') <- Process.readProcessWithExitCode "curl" ["localhost:3000/health"] ""
       pid <- Process.getPid process
       cleanup pid
