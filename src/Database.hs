@@ -47,8 +47,8 @@ getGridById :: Postgres.Connection -> Integer -> IO [GridT]
 getGridById conn id = Postgres.query conn "SELECT * FROM grid WHERE grid.id = ?" [id]
 
 saveGrid :: Postgres.Connection -> Integer -> Domain.Grid -> IO Int64
-saveGrid conn id grid = Postgres.execute conn "UPDATE grid SET solved = ? WHERE id = ?" (solved, id)
-  where solved = Domain.isSolved grid
+saveGrid conn id grid = Postgres.execute conn "UPDATE grid SET solved = ? WHERE id = ?" (s, id)
+  where s = Domain.isSolved grid
 
 deleteGrid :: Postgres.Connection -> Integer -> IO Int64
 deleteGrid conn id = Postgres.execute conn "DELETE FROM grid WHERE id = ?" [id]
