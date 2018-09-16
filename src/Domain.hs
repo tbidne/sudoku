@@ -12,7 +12,7 @@ import qualified Data.Aeson as Aeson (FromJSON, ToJSON)
 data Grid
   = Grid {
     gridId :: Int,
-    cells :: [[Cell]],
+    cells :: [Cell],
     isSolved :: Bool
   }
   deriving (Eq, Show, Generics.Generic)

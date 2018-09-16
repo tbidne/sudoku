@@ -7,10 +7,10 @@ module API
 )
 where
 
-import Servant ((:>), (:<|>)(..), Capture, Get, JSON, Post, Put, ReqBody, Delete)
-import qualified Data.Proxy as Proxy
-import qualified Domain (Grid(..))
+import Servant ((:>), (:<|>)(..), Capture, Get, JSON, Put, ReqBody, Delete,)
+import Data.Proxy (Proxy(..))
 import Data.Int
+import qualified Domain (Grid(..))
 
 -- GET /health
 -- GET /grid
@@ -25,5 +25,5 @@ type SudokuApi =
   "grid" :> Capture "gridId" Integer :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Int64 :<|>
   "grid" :> Capture "gridId" Integer :> Delete '[JSON] Int64
 
-sudokuApi :: Proxy.Proxy SudokuApi
-sudokuApi = Proxy.Proxy
+sudokuApi :: Proxy SudokuApi
+sudokuApi = Proxy
