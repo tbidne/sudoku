@@ -34,8 +34,8 @@ data CellT =
     parentGridId :: Int,
     row :: Int,
     col :: Int,
-    realValue :: Int,
-    userValue :: Int,
+    realValue :: Maybe Int,
+    userValue :: Maybe Int,
     revealed :: Bool
   }
   deriving (Eq, Show, Generics.Generic)

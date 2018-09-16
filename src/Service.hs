@@ -7,12 +7,14 @@ module Service
 )
 where
 
-import qualified Servant (err404, err500, Handler, throwError)
+import Prelude hiding (id)
+import qualified Servant (err500, Handler, throwError)
 import qualified Domain (Cell(..), Grid(..))
 import qualified Database.PostgreSQL.Simple as Postgres (Connection)
+import Control.Monad.IO.Class (liftIO)
+import Data.Int (Int64)
+import Data.Maybe (fromMaybe)
 import qualified Database as DB (deleteGrid, getGridById, saveGrid, getCellsByGridId, GridT(..), CellT(..))
-import Control.Monad.IO.Class
-import Data.Int
 
 -- API
 
@@ -44,9 +46,6 @@ blankGrid :: Domain.Grid
 blankGrid = Domain.Grid 0 cells False
   where cells = replicate 81 exampleCell
 
-exampleGrid :: Domain.Grid
-exampleGrid = Domain.Grid 0 [] False
-
 exampleCell :: Domain.Cell
 exampleCell = Domain.Cell 0 0 0 0 0 False
 
@@ -59,7 +58,7 @@ gridTToGrid [gridT] mCells = case mCells of
   Just cells -> Just $ Domain.Grid id cells solved
   where id = DB.gridId gridT
         solved = DB.solved gridT
-gridTToGrid (gridT:_) _ = Nothing
+gridTToGrid _ _ = Nothing
 
 -- TODO use fold here
 -- query should return a single object
@@ -70,6 +69,6 @@ cellTToCell (x:xs) acc = cellTToCell xs $ acc ++ [Domain.Cell id row col realVal
   where id = DB.cellId x
         row = DB.row x
         col = DB.col x
-        realValue = DB.realValue x
-        userValue = DB.userValue x
+        realValue =  fromMaybe (-1) $ DB.realValue x
+        userValue =  fromMaybe (-1) $ DB.userValue x
         revealed = DB.revealed x

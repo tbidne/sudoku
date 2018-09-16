@@ -21,7 +21,7 @@ run = do
         Warp.defaultSettings
   attempt <- try getDbConnection :: IO (Either SomeException Postgres.Connection)
   case attempt of
-    Left ex -> putStrLn "Failed to connect to db, closing"
+    Left _ -> putStrLn "Failed to connect to db, closing"
     Right conn -> Warp.runSettings settings =<< mkApp conn
 
 mkApp :: Postgres.Connection -> IO Servant.Application
