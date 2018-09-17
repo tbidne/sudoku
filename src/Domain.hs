@@ -6,19 +6,19 @@ module Domain
 )
 where
 
-import qualified GHC.Generics as Generics (Generic)
-import qualified Data.Aeson as Aeson (FromJSON, ToJSON)
+import GHC.Generics (Generic)
+import Data.Aeson (FromJSON, ToJSON)
 
 data Grid
   = Grid {
     gridId :: Int,
     cells :: [Cell],
-    isSolved :: Bool
+    solved :: Bool
   }
-  deriving (Eq, Show, Generics.Generic)
+  deriving (Eq, Show, Generic)
 
-instance Aeson.ToJSON Grid
-instance Aeson.FromJSON Grid
+instance ToJSON Grid
+instance FromJSON Grid
 
 data Cell
   = Cell {
@@ -27,9 +27,9 @@ data Cell
     col :: Int,
     realValue :: Int,
     userValue :: Int,
-    isRevealed :: Bool
+    revealed :: Bool
   }
-  deriving (Eq, Show, Generics.Generic)
+  deriving (Eq, Show, Generic)
 
-instance Aeson.ToJSON Cell
-instance Aeson.FromJSON Cell
+instance ToJSON Cell
+instance FromJSON Cell

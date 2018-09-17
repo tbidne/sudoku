@@ -8,8 +8,8 @@ CREATE TABLE grid (
 CREATE TABLE cell (
     id int primary key not null,
     grid_id int not null references grid(id),
-    y int not null,
-    x int not null,
+    cCol int not null,
+    cRow int not null,
     real_value int,
     user_value int,
     revealed boolean not null
