@@ -27,19 +27,20 @@ initGrid :: Handler Domain.Grid
 initGrid = return blankGrid
 
 getGridById :: Connection -> Integer -> Handler Domain.Grid
-getGridById conn id = do
-  gridT <- liftIO $ DB.getGridById conn id
-  cellTs <- liftIO $ DB.getCellsByGridId conn id
-  let cells = cellTToCell cellTs []
-  let transformed = gridTToGrid gridT cells
+getGridById conn id =
+  liftIO (DB.getGridById conn id) >>= \gridT ->
+  liftIO (DB.getCellsByGridId conn id) >>= \cellTs ->
+  let cells = cellTToCell cellTs [] in
+  let transformed = gridTToGrid gridT cells in
   case transformed of
     Nothing -> throwError err500
     Just grid -> return grid
 
 saveGrid :: Connection -> Integer -> Domain.Grid -> Handler Int64
-saveGrid conn id grid = do
-  _ <- liftIO $ DB.saveGrid conn id grid
-  liftIO $ DB.saveCells conn $ Domain.cells grid
+saveGrid conn id grid =
+  liftIO (DB.saveGrid conn id grid) >>= \x ->
+  liftIO (DB.saveCells conn $ Domain.cells grid) >>= \y ->
+  return (x + y)
 
 deleteGrid :: Connection -> Integer -> Handler Int64
 deleteGrid conn id = liftIO $ DB.deleteGrid conn id
@@ -57,11 +58,12 @@ exampleCell = Domain.Cell 0 0 0 0 0 False
 gridTToGrid :: [DB_Grid.GridT] -> Maybe [Domain.Cell] -> Maybe Domain.Grid
 gridTToGrid _ Nothing = Nothing
 gridTToGrid [] _ = Nothing
-gridTToGrid [gridT] mCells = case mCells of
-  Nothing -> Nothing
-  Just cells -> Just $ Domain.Grid id cells solved
-  where id = DB_Grid.gridId gridT
-        solved = DB_Grid.solved gridT
+gridTToGrid [gridT] mCells =
+  case mCells of
+    Nothing -> Nothing
+    Just cells -> Just $ Domain.Grid id cells solved
+    where id = DB_Grid.gridId gridT
+          solved = DB_Grid.solved gridT
 gridTToGrid _ _ = Nothing
 
 -- TODO use fold here
