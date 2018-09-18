@@ -53,8 +53,9 @@ saveGrid conn id grid = execute conn "UPDATE grid SET solved = ? WHERE id = ?" (
 
 saveCells :: Connection -> [Domain.Cell] -> IO Int64
 saveCells conn cells = executeMany conn q vals
-  where q = "UPDATE cell c SET user_value = upd.usr FROM (VALUES (?, ?)) as upd(usr, id) WHERE c.id = upd.id"
-        vals = map (\c -> (Domain.userValue c, Domain.cellId c)) cells
+  where q = "UPDATE cell c SET user_value = upd.usr FROM \
+            \(VALUES (?, ?, ?)) as upd(usr, real, id) WHERE c.id = upd.id"
+        vals = map (\c -> (Domain.userValue c, Domain.realValue c, Domain.cellId c)) cells
 
 deleteGrid :: Connection -> Integer -> IO Int64
 deleteGrid conn id = execute conn "DELETE FROM grid WHERE id = ?" [id]

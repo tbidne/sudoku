@@ -4,6 +4,7 @@ module Service
 , initGrid
 , saveGrid
 , deleteGrid
+, solveGrid
 )
 where
 
@@ -30,7 +31,7 @@ getGridById :: Connection -> Integer -> Handler Domain.Grid
 getGridById conn id =
   liftIO (DB.getGridById conn id) >>= \gridT ->
   liftIO (DB.getCellsByGridId conn id) >>= \cellTs ->
-  let cells = cellTToCell cellTs [] in
+  let cells = cellTToCell cellTs in
   let transformed = gridTToGrid gridT cells in
   case transformed of
     Nothing -> throwError err500
@@ -45,6 +46,12 @@ saveGrid conn id grid =
 deleteGrid :: Connection -> Integer -> Handler Int64
 deleteGrid conn id = liftIO $ DB.deleteGrid conn id
 
+solveGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
+solveGrid conn id grid =
+  let solved = solve grid in
+  saveGrid conn id solved >>= \_ ->
+  return solved
+
 -- Internal
 
 blankGrid :: Domain.Grid
@@ -53,6 +60,9 @@ blankGrid = Domain.Grid 0 cells False
 
 exampleCell :: Domain.Cell
 exampleCell = Domain.Cell 0 0 0 0 0 False
+
+solve :: Domain.Grid -> Domain.Grid
+solve grid = grid
 
 -- query should return a single object
 gridTToGrid :: [DB_Grid.GridT] -> Maybe [Domain.Cell] -> Maybe Domain.Grid
@@ -66,15 +76,15 @@ gridTToGrid [gridT] mCells =
           solved = DB_Grid.solved gridT
 gridTToGrid _ _ = Nothing
 
--- TODO use fold here
 -- query should return a single object
-cellTToCell :: [DB_Cell.CellT] -> [Domain.Cell] -> Maybe [Domain.Cell]
-cellTToCell [] [] = Nothing
-cellTToCell [] acc = Just acc
-cellTToCell (x:xs) acc = cellTToCell xs $ acc ++ [Domain.Cell id row col realValue userValue revealed]
-  where id = DB_Cell.cellId x
-        row = DB_Cell.row x
-        col = DB_Cell.col x
-        realValue =  fromMaybe (-1) $ DB_Cell.realValue x
-        userValue =  fromMaybe (-1) $ DB_Cell.userValue x
-        revealed = DB_Cell.revealed x
+cellTToCell :: [DB_Cell.CellT] -> Maybe [Domain.Cell]
+cellTToCell [] = Nothing
+cellTToCell cellTs = Just $ map (\cellT -> 
+    let id = DB_Cell.cellId cellT in
+    let row = DB_Cell.row cellT in
+    let col = DB_Cell.col cellT in
+    let realValue = fromMaybe (-1) $ DB_Cell.realValue cellT in
+    let userValue = fromMaybe (-1) $ DB_Cell.userValue cellT in
+    let revealed = DB_Cell.revealed cellT in
+    Domain.Cell id row col realValue userValue revealed
+  ) cellTs
