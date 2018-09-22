@@ -20,7 +20,7 @@ import qualified Domain (Grid(..))
 -- * PUT /grid/<id>/solve
 
 type SudokuApi =
-  "health" :> Get '[JSON] String  :<|>
+  "health" :> Get '[JSON] String :<|>
   "grid" :> Get '[Servant.JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> Get '[JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Int64 :<|>
