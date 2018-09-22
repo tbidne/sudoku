@@ -7,17 +7,17 @@ module API
 )
 where
 
-import Servant ((:>), (:<|>)(..), Capture, Get, JSON, Put, ReqBody, Delete,)
-import Data.Proxy (Proxy(..))
-import Data.Int
-import qualified Domain (Grid(..))
+import           Servant    ((:>), (:<|>)(..), Capture, Get, JSON, Put, ReqBody, Delete,)
+import           Data.Proxy (Proxy(..))
+import           Data.Int   (Int64)
+import qualified Domain     (Grid(..))
 
 -- GET /health
 -- GET /grid
 -- GET /grid/<id>
 -- PUT /grid/<id>
 -- DELETE /grid/<id>
--- * PUT /grid/<id>/solve
+-- PUT /grid/<id>/solve
 
 type SudokuApi =
   "health" :> Get '[JSON] String :<|>

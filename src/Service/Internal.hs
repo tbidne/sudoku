@@ -11,7 +11,7 @@ module Service.Internal
 )
 where
 
-import           Prelude    hiding   (id)
+import           Prelude      hiding (id)
 import           Data.Maybe          (fromMaybe)
 import qualified Domain              (Cell(..), Grid(..))
 import qualified Database as DB_Cell (CellT(..))

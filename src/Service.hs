@@ -8,13 +8,13 @@ module Service
 )
 where
 
-import Prelude hiding (id)
-import Servant (err500, Handler, throwError)
-import Database.PostgreSQL.Simple as Postgres (Connection)
-import Control.Monad.IO.Class (liftIO)
-import Data.Int (Int64)
-import qualified Domain (Grid(..))
-import qualified Database as DB (deleteGrid, getGridById, saveGrid, getCellsByGridId, saveCells)
+import           Prelude                         hiding (id)
+import           Servant                                (err500, Handler, throwError)
+import           Database.PostgreSQL.Simple as Postgres (Connection)
+import           Control.Monad.IO.Class                 (liftIO)
+import           Data.Int                               (Int64)
+import qualified Domain                                 (Grid(..))
+import qualified Database as DB
 import qualified Service.Internal as Internal
 
 health :: Handler String
