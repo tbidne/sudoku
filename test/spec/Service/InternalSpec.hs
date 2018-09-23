@@ -73,18 +73,15 @@ spec = do
     it "getSolvedGrid for empty list should return Nothing" $ do
       getSolvedGrid [] `shouldBe` Nothing
 
-    it "getSolvedGrid for list with no empty cells should return Nothing" $ do
-      let grids = mockGridTuples
+    it "getSolvedGrid for list with no solved grids return Nothing" $ do
+      let grids = mockGridMaybes
       let results = getSolvedGrid grids
 
       results `shouldBe` Nothing
 
-    it "getSolvedGrid for list with empty cell should return Cell" $ do
-      let grids = mockGridTuplesWithSolved
-      let jGrid = getSolvedGrid grids
-
-      jGrid `shouldSatisfy` isJust
-      let result = fromJust jGrid
+    it "getSolvedGrid for list with solved grid should return Just grid" $ do
+      let grids = mockGridMaybesWithSolved
+      let result = getSolvedGrid grids
 
       result `shouldBe` grids !! 1
 
@@ -131,35 +128,35 @@ spec = do
 
   describe "solve tests" $ do
     it "should return solved grid" $ do
-      solve MSG.gridOneSolved `shouldBe` (MSG.gridOneSolved, True)
+      solve MSG.gridOneSolved `shouldBe` Just MSG.gridOneSolved
 
     it "should solve trivial grid" $ do
-      let (grid', result) = solve MSG.gridOneTrivial
+      let result = solve MSG.gridOneTrivial
 
-      result `shouldBe` True
-      grid' `shouldSatisfy` gridEquals MSG.gridOneSolved
+      result `shouldSatisfy` isJust
+      fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
     it "should solve easy grid" $ do
-      let (grid', result) = solve MSG.gridOneEasy
+      let result = solve MSG.gridOneEasy
 
-      result `shouldBe` True
-      grid' `shouldSatisfy` gridEquals MSG.gridOneSolved
+      result `shouldSatisfy` isJust
+      fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
     it "should solve medium grid" $ do
-      let (grid', result) = solve MSG.gridOneMedium
+      let result = solve MSG.gridOneMedium
 
-      result `shouldBe` True
-      grid' `shouldSatisfy` gridEquals MSG.gridOneSolved
+      result `shouldSatisfy` isJust
+      fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
     it "should not solve impossible grid" $ do
-      let (_, result) = solve MSG.gridOneImpossible
-      result `shouldBe` False
+      let result = solve MSG.gridOneImpossible
+      result `shouldBe` Nothing
 
     it "should solve real grid one" $ do
-      let (grid', result) = solve MSG.gridOneReal
+      let result = solve MSG.gridOneReal
 
-      result `shouldBe` True
-      grid' `shouldSatisfy` gridEquals MSG.gridOneSolved
+      result `shouldSatisfy` isJust
+      fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
     -- this is too hard for travis apparently, so commenting out for now
     --it "should solve real grid two" $ do
@@ -214,11 +211,11 @@ mockGridsWithSolved = [g1, g2, g3]
         g2 = Domain.Grid 1 [] True
         g3 = Domain.Grid 2 [] False
 
-mockGridTuples :: [(Domain.Grid, Bool)]
-mockGridTuples = map (\g -> (g, Domain.solved g)) mockGrids
+mockGridMaybes :: [Maybe Domain.Grid]
+mockGridMaybes = map (\g -> if Domain.solved g then Just g else Nothing) mockGrids
 
-mockGridTuplesWithSolved :: [(Domain.Grid, Bool)]
-mockGridTuplesWithSolved = map (\g -> (g, Domain.solved g)) mockGridsWithSolved
+mockGridMaybesWithSolved :: [Maybe Domain.Grid]
+mockGridMaybesWithSolved = map (\g -> if Domain.solved g then Just g else Nothing) mockGridsWithSolved
 
 findByIdAndCompareVal :: [Domain.Cell] -> Domain.Cell -> Bool
 findByIdAndCompareVal cells c =

@@ -5,7 +5,7 @@ module CurlSpec
 )
 where 
 
-import Test.Hspec (describe, it, Spec, shouldBe)
+import           Test.Hspec                (describe, it, Spec, shouldBe)
 import qualified System.Process as Process (callCommand, getPid, Pid, readProcessWithExitCode, spawnCommand)
 
 spec :: Spec
@@ -14,7 +14,7 @@ spec = do
     it "should curl the application" $ do
       process <- Process.spawnCommand "stack exec sudoku-exe"
       Process.callCommand "sleep 1"
-      (errCode, stdout', stderr') <- Process.readProcessWithExitCode "curl" ["localhost:3000/health"] ""
+      (_, stdout', _) <- Process.readProcessWithExitCode "curl" ["localhost:3000/health"] ""
       pid <- Process.getPid process
       cleanup pid
       stdout' `shouldBe` "\"Sudoku is up!\""

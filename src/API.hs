@@ -7,7 +7,7 @@ module API
 )
 where
 
-import           Servant    ((:>), (:<|>)(..), Capture, Get, JSON, Put, ReqBody, Delete,)
+import           Servant    ((:>), (:<|>), Capture, Get, JSON, Put, ReqBody, Delete,)
 import           Data.Proxy (Proxy(..))
 import           Data.Int   (Int64)
 import qualified Domain     (Grid(..))

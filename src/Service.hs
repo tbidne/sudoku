@@ -44,6 +44,10 @@ deleteGrid conn id = liftIO $ DB.deleteGrid conn id
 
 solveGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 solveGrid conn id grid =
-  let (solved,_) = Internal.solve grid in
-  saveGrid conn id solved >>= \_ ->
-  return solved
+  case Internal.solve grid of
+    Nothing ->
+      liftIO (putStrLn "Could not solve grid!") >>= \_ ->
+      throwError err500
+    Just solved -> 
+      saveGrid conn id solved >>= \_ ->
+      return solved

@@ -52,16 +52,16 @@ cellTToCell cellTs = Just $ map (\cellT ->
 -- main solving
 
 -- remember to make set flag true here
-solve :: Domain.Grid -> (Domain.Grid, Bool)
+solve :: Domain.Grid -> Maybe Domain.Grid
 solve grid =
   let cells = Domain.cells grid in
   case getEmptyCell cells of
-    Nothing -> (grid, validate grid)
+    Nothing -> if validate grid then Just grid else Nothing
     Just empty ->
       let allGuesses = allGuessesForCell grid empty in
       let filtered = filter validate allGuesses in
       let possibleSolns = map solve filtered in
-      fromMaybe (grid, False) (getSolvedGrid possibleSolns)
+      getSolvedGrid possibleSolns
 
 -- TODO: make this (boxes) better
 validate :: Domain.Grid -> Bool
@@ -122,9 +122,12 @@ guessHelper grid cells cell (x:xs) acc = guessHelper grid cells cell xs $ acc ++
                   (cells ++ [cell'])
                   False
 
-getSolvedGrid :: [(Domain.Grid, Bool)] -> Maybe (Domain.Grid, Bool)
+getSolvedGrid :: [Maybe Domain.Grid] -> Maybe Domain.Grid
 getSolvedGrid [] = Nothing
-getSolvedGrid pairs = takeFirst snd pairs
+getSolvedGrid (g:gs) =
+  case g of
+    Nothing -> getSolvedGrid gs
+    Just grid -> Just grid
 
 getEmptyCell :: [Domain.Cell] -> Maybe Domain.Cell
 getEmptyCell [] = Nothing
