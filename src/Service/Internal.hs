@@ -29,10 +29,7 @@ exampleCell = Domain.Cell 0 0 0 0 0 False
 gridTToGrid :: [DB_Grid.GridT] -> Maybe [Domain.Cell] -> Maybe Domain.Grid
 gridTToGrid _ Nothing = Nothing
 gridTToGrid [] _ = Nothing
-gridTToGrid [gridT] mCells =
-  case mCells of
-    Nothing -> Nothing
-    Just cells -> Just $ Domain.Grid id cells solved
+gridTToGrid [gridT] (Just cells) = Just $ Domain.Grid id cells solved
     where id = DB_Grid.gridId gridT
           solved = DB_Grid.solved gridT
 gridTToGrid _ _ = Nothing
