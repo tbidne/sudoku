@@ -5,6 +5,9 @@ module Service
 , saveGrid
 , deleteGrid
 , solveGrid
+, revealCell
+, revealGrid
+, clearGrid
 )
 where
 
@@ -13,7 +16,7 @@ import           Servant                                (err500, Handler, throwE
 import           Database.PostgreSQL.Simple as Postgres (Connection)
 import           Control.Monad.IO.Class                 (liftIO)
 import           Data.Int                               (Int64)
-import qualified Domain                                 (Grid(..))
+import qualified Domain                                 (Cell(..), Grid(..))
 import qualified Database as DB
 import qualified Service.Internal as Internal
 
@@ -51,3 +54,12 @@ solveGrid conn id grid =
     Just solved -> 
       saveGrid conn id solved >>= \_ ->
       return solved
+
+revealCell :: Connection -> Integer -> Domain.Cell -> Handler Domain.Cell
+revealCell _ _ = return
+
+revealGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
+revealGrid _ _ = return
+
+clearGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
+clearGrid _ _ = return

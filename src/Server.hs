@@ -3,14 +3,15 @@ module Server
 )
 where
 
-import qualified Network.Wai.Handler.Warp as Warp (defaultSettings, runSettings, setBeforeMainLoop, setPort)
-import Servant ((:<|>)(..))
-import qualified Servant (Application, serve, Server)
-import           System.IO
-import qualified Service (health, getGridById, initGrid, saveGrid, deleteGrid, solveGrid)
-import qualified Database.PostgreSQL.Simple as Postgres (connect, ConnectInfo(..), Connection)
-import qualified API (SudokuApi, sudokuApi)
-import Control.Exception (try, SomeException)
+import           System.IO                              (hPutStrLn, stderr)
+import           Control.Exception                      (try, SomeException)
+import qualified Network.Wai.Handler.Warp as Warp       (defaultSettings, runSettings, setBeforeMainLoop, setPort)
+import           Servant                                ((:<|>)(..))
+import qualified Servant                                (Application, serve, Server)
+import qualified Database.PostgreSQL.Simple as Postgres (ConnectInfo(..), connect, Connection)
+import qualified API                                    (SudokuApi, sudokuApi)
+import qualified Service
+
 
 run :: IO ()
 run = do
@@ -34,7 +35,10 @@ server conn =
   Service.getGridById conn :<|>
   Service.saveGrid conn :<|>
   Service.deleteGrid conn :<|>
-  Service.solveGrid conn
+  Service.solveGrid conn :<|>
+  Service.revealCell conn :<|>
+  Service.revealGrid conn :<|>
+  Service.clearGrid conn
 
 myConnectInfo :: Postgres.ConnectInfo
 myConnectInfo = Postgres.ConnectInfo "localhost" 5432 "postgres" "" "sudoku"

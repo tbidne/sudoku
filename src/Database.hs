@@ -53,7 +53,7 @@ saveGrid conn id grid = execute conn "UPDATE grid SET solved = ? WHERE id = ?" (
 
 saveCells :: Connection -> [Domain.Cell] -> IO Int64
 saveCells conn cells = executeMany conn q vals
-  where q = "UPDATE cell c SET user_value = upd.usr FROM \
+  where q = "UPDATE cell c SET user_value = upd.usr, real_value = upd.real FROM \
             \(VALUES (?, ?, ?)) as upd(usr, real, id) WHERE c.id = upd.id"
         vals = map (\c -> (Domain.userValue c, Domain.realValue c, Domain.cellId c)) cells
 
