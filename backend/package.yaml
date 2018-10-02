@@ -6,10 +6,6 @@ author:              "Thomas Bidne"
 maintainer:          "tbidne@gmail.com"
 copyright:           "2018 Thomas Bidne"
 
-extra-source-files:
-- README.md
-- ChangeLog.md
-
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
 # category:            Web
