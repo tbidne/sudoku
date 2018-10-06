@@ -1,0 +1,13 @@
+.cell {
+    border-width: 1px;
+    border-color: #000000;
+    margin-left: 1px;
+}
+
+.cell:nth-child(3n) {
+    margin-right: 5px;
+}
+
+.revealed {
+    color: rgb(41, 38, 236);
+}

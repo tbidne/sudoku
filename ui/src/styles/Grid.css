@@ -1,0 +1,52 @@
+.grid {
+    style: "font-size:25px;"
+}
+
+.grid-row {
+    clear: both;
+    float: center;
+    margin-bottom: 1px;
+}
+
+.grid-row:nth-child(3n) {
+    margin-bottom: 6px;
+}
+
+#wrapper {
+    text-align:center;
+    width: 80%;
+    margin: 0, auto;    
+}
+
+.left {
+    /*display:inline-block;*/
+    float:left;
+    width: 35%;
+}
+
+.blah {
+    text-align: left;
+}
+
+.right {
+    /*display: inline-block;*/
+    float:left;
+    margin-left: 50px;
+    /*width: 450px;*/
+}
+
+.middle {
+    /*background: rgb(186,177,152);*/
+    /*display: inline-block;*/
+    float: left;
+    /*min-height: 250px;*/
+    /*margin: 0 30px;*/
+    /*width: 1px;*/
+}
+
+.btn {
+    /*display: inline-block;*/
+    width: 200px;
+    /*background: gray;*/
+    margin-bottom: 5px;
+}

@@ -26,6 +26,7 @@ library:
     - servant
     - servant-server
     - wai
+    - wai-cors
     - warp
 
 executables:
@@ -44,6 +45,7 @@ executables:
     - servant
     - servant-server
     - wai
+    - wai-cors
     - warp
 
 tests:

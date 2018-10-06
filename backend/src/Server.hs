@@ -6,6 +6,7 @@ where
 import           System.IO                              (hPutStrLn, stderr)
 import           Control.Exception                      (try, SomeException)
 import qualified Network.Wai.Handler.Warp as Warp       (defaultSettings, runSettings, setBeforeMainLoop, setPort)
+import qualified Network.Wai.Middleware.Cors as Wai     (simpleCors)
 import           Servant                                ((:<|>)(..))
 import qualified Servant                                (Application, serve, Server)
 import qualified Database.PostgreSQL.Simple as Postgres (ConnectInfo(..), connect, Connection)
@@ -15,7 +16,7 @@ import qualified Service
 
 run :: IO ()
 run = do
-  let port = 3000
+  let port = 3001
       settings =
         Warp.setPort port $
         Warp.setBeforeMainLoop (hPutStrLn stderr ("listening on port " ++ show port)) 
@@ -26,7 +27,7 @@ run = do
     Right conn -> Warp.runSettings settings =<< mkApp conn
 
 mkApp :: Postgres.Connection -> IO Servant.Application
-mkApp conn = return $ Servant.serve API.sudokuApi $ server conn
+mkApp conn = return $ Wai.simpleCors (Servant.serve API.sudokuApi $ server conn)
 
 server :: Postgres.Connection -> Servant.Server API.SudokuApi
 server conn =

@@ -14,7 +14,7 @@ spec = do
     it "should curl the application" $ do
       process <- Process.spawnCommand "stack exec sudoku-exe"
       Process.callCommand "sleep 1"
-      (_, stdout', _) <- Process.readProcessWithExitCode "curl" ["localhost:3000/health"] ""
+      (_, stdout', _) <- Process.readProcessWithExitCode "curl" ["localhost:3001/health"] ""
       pid <- Process.getPid process
       cleanup pid
       stdout' `shouldBe` "\"Sudoku is up!\""
