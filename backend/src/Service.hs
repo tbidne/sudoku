@@ -61,5 +61,8 @@ revealCell _ _ = return
 revealGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 revealGrid _ _ = return
 
-clearGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
-clearGrid _ _ = return
+clearGrid :: Connection -> Integer -> Handler Domain.Grid
+clearGrid conn id =
+  let newGrid = Internal.blankGrid in
+  saveGrid conn id newGrid >>= \_ ->
+  return newGrid

@@ -19,10 +19,8 @@ import qualified Database as DB_Grid (GridT(..))
 
 blankGrid :: Domain.Grid
 blankGrid = Domain.Grid 0 cells False
-  where cells = replicate 81 exampleCell
-
-exampleCell :: Domain.Cell
-exampleCell = Domain.Cell 0 0 0 0 0 False
+  where initCells = zipWith (\id (row, col) -> Domain.Cell id row col 0 0 False)
+        cells = initCells [0..] [(x, y) | x <- [1..9], y <- [1..9]]
 
 -- transformers
 

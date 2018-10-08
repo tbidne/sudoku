@@ -20,7 +20,7 @@ import qualified Domain     (Cell(..), Grid(..))
 -- PUT /grid/<id>/solve, Grid
 -- PUT: cell/<id>/reveal, Cell
 -- PUT: grid/<id>/reveal, Grid
--- PUT: grid/<id>/clear, Grid
+-- PUT: grid/<id>/clear
 
 type SudokuApi =
   "health" :> Get '[JSON] String :<|>
@@ -31,7 +31,7 @@ type SudokuApi =
   "grid" :> Capture "gridId" Integer :> "solve" :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Domain.Grid :<|>
   "cell" :> Capture "cellId" Integer :> "reveal" :> ReqBody '[JSON] Domain.Cell :> Put '[JSON] Domain.Cell :<|>
   "grid" :> Capture "gridId" Integer :> "reveal" :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Domain.Grid :<|>
-  "grid" :> Capture "gridId" Integer :> "clear" :> ReqBody '[JSON] Domain.Grid :>  Put '[JSON] Domain.Grid
+  "grid" :> Capture "gridId" Integer :> "clear" :> Put '[JSON] Domain.Grid
 
 sudokuApi :: Proxy SudokuApi
 sudokuApi = Proxy
