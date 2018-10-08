@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Server
 ( run
 )
@@ -5,8 +7,9 @@ where
 
 import           System.IO                              (hPutStrLn, stderr)
 import           Control.Exception                      (try, SomeException)
+import           Network.Wai                            (Middleware)
 import qualified Network.Wai.Handler.Warp as Warp       (defaultSettings, runSettings, setBeforeMainLoop, setPort)
-import qualified Network.Wai.Middleware.Cors as Wai     (simpleCors)
+import qualified Network.Wai.Middleware.Cors as Wai
 import           Servant                                ((:<|>)(..))
 import qualified Servant                                (Application, serve, Server)
 import qualified Database.PostgreSQL.Simple as Postgres (ConnectInfo(..), connect, Connection)
@@ -27,7 +30,7 @@ run = do
     Right conn -> Warp.runSettings settings =<< mkApp conn
 
 mkApp :: Postgres.Connection -> IO Servant.Application
-mkApp conn = return $ Wai.simpleCors (Servant.serve API.sudokuApi $ server conn)
+mkApp conn = return $ corsWithContentType (Servant.serve API.sudokuApi $ server conn)
 
 server :: Postgres.Connection -> Servant.Server API.SudokuApi
 server conn =
@@ -46,3 +49,11 @@ myConnectInfo = Postgres.ConnectInfo "localhost" 5432 "postgres" "" "sudoku"
 
 getDbConnection :: IO Postgres.Connection
 getDbConnection = Postgres.connect myConnectInfo
+
+corsWithContentType :: Middleware
+corsWithContentType = Wai.cors (const $ Just policy)
+  where policy =
+          Wai.simpleCorsResourcePolicy {
+            Wai.corsRequestHeaders = ["Content-Type"],
+            Wai.corsMethods = "PUT" : Wai.simpleMethods
+          }
