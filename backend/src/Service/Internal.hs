@@ -51,12 +51,17 @@ solve :: Domain.Grid -> Maybe Domain.Grid
 solve grid =
   let cells = Domain.cells grid in
   case getEmptyCell cells of
-    Nothing -> if validate grid then Just grid else Nothing
+    Nothing -> if validate grid then Just $ solvedGrid grid else Nothing
     Just empty ->
       let allGuesses = allGuessesForCell grid empty in
       let filtered = filter validate allGuesses in
       let possibleSolns = map solve filtered in
       getSolvedGrid possibleSolns
+
+solvedGrid :: Domain.Grid -> Domain.Grid
+solvedGrid grid = Domain.Grid id cells True
+  where id = Domain.gridId grid
+        cells = Domain.cells grid
 
 -- TODO: make this (boxes) better
 validate :: Domain.Grid -> Bool

@@ -128,7 +128,10 @@ spec = do
 
   describe "solve tests" $ do
     it "should return solved grid" $ do
-      solve MSG.gridOneSolved `shouldBe` Just MSG.gridOneSolved
+      let result = solve MSG.gridOneSolved
+
+      result `shouldSatisfy` isJust
+      fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
     it "should solve trivial grid" $ do
       let result = solve MSG.gridOneTrivial

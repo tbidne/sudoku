@@ -1,7 +1,6 @@
 module Service
 ( health
 , getGridById
-, initGrid
 , saveGrid
 , deleteGrid
 , solveGrid
@@ -22,9 +21,6 @@ import qualified Service.Internal as Internal
 
 health :: Handler String
 health = return "Sudoku is up!"
-
-initGrid :: Handler Domain.Grid
-initGrid = return Internal.blankGrid
 
 getGridById :: Connection -> Integer -> Handler Domain.Grid
 getGridById conn id =

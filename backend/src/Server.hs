@@ -35,7 +35,6 @@ mkApp conn = return $ corsWithContentType (Servant.serve API.sudokuApi $ server 
 server :: Postgres.Connection -> Servant.Server API.SudokuApi
 server conn =
   Service.health :<|>
-  Service.initGrid :<|>
   Service.getGridById conn :<|>
   Service.saveGrid conn :<|>
   Service.deleteGrid conn :<|>

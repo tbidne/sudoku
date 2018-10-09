@@ -13,7 +13,6 @@ import           Data.Int   (Int64)
 import qualified Domain     (Cell(..), Grid(..))
 
 -- GET /health
--- GET /grid
 -- GET /grid/<id>
 -- PUT /grid/<id>, Grid
 -- DELETE /grid/<id>
@@ -24,7 +23,6 @@ import qualified Domain     (Cell(..), Grid(..))
 
 type SudokuApi =
   "health" :> Get '[JSON] String :<|>
-  "grid" :> Get '[Servant.JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> Get '[JSON] Domain.Grid :<|>
   "grid" :> Capture "gridId" Integer :> ReqBody '[JSON] Domain.Grid :> Put '[JSON] Int64 :<|>
   "grid" :> Capture "gridId" Integer :> Delete '[JSON] Int64 :<|>
