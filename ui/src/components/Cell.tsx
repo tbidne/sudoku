@@ -8,6 +8,8 @@ interface ICell {
     realValue: number;
     userValue: number;
     revealed: boolean;
+    onChange: any;
+    onSelect: any;
 }
 
 export default class Cell extends React.Component<ICell, {}> {
@@ -20,16 +22,22 @@ export default class Cell extends React.Component<ICell, {}> {
             <input
                 className={this.getClassName()}
                 type="number"
-                id="cell-{this.props.id}"
-                name="cell-{this.props.id}"
+                id={this.getId()}
+                name={this.getId()}
                 min={1}
                 max={9}
                 height="md"
                 width="md"
                 value={this.getShownValue()}
                 disabled={this.props.revealed}
+                onChange={this.props.onChange}
+                onSelect={this.props.onSelect}
             />
         );
+    }
+
+    private getId(): string {
+        return `cell-${this.props.cellId}`
     }
 
     private getClassName(): string {
@@ -40,6 +48,6 @@ export default class Cell extends React.Component<ICell, {}> {
         if (this.props.revealed) {
             return this.props.realValue;
         }
-        return this.props.userValue > 0 ? this.props.userValue : null;
+        return this.props.userValue > 0 ? this.props.userValue : '';
     }
 }

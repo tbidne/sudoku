@@ -1,20 +1,27 @@
 import * as React from 'react';
-import { ReactElement } from 'react';
+import { ReactElement, SyntheticEvent } from 'react';
 import { CellDto } from '../domain/cell.dto';
 import { GridDto } from '../domain/grid.dto';
 import { RestService } from '../services/rest.service';
 import '../styles/Grid.css';
 import Cell from './Cell';
 
-export default class Grid extends React.Component<{}, { message: string, grid: GridDto }> {
+interface IGridState {
+    message: string,
+    grid: GridDto,
+    selectedCell: number
+}
+
+export default class Grid extends React.Component<{}, IGridState> {
 
     private restService: RestService;
-    // private grid: GridDto;
 
     constructor(props: any) {
         super(props);
 
-        this.state = { message: '', grid: new GridDto() };
+        this.state = { message: '', grid: new GridDto(), selectedCell: -1 };
+
+        this.clearGrid = this.clearGrid.bind(this);
 
         this.restService = new RestService();
         this.restService.health().then(response => {
@@ -29,7 +36,8 @@ export default class Grid extends React.Component<{}, { message: string, grid: G
         realValue: number, userValue: number, revealed: boolean): JSX.Element {
 
         return <Cell cellId = {cellId} row={row} col={col} realValue={realValue}
-        userValue={userValue} revealed={revealed}  key={cellId} />;
+        userValue={userValue} revealed={revealed} key={cellId}
+        onChange={this.updateCell} onSelect={this.selectCell}/>;
     }
 
     public render() {
@@ -97,17 +105,31 @@ export default class Grid extends React.Component<{}, { message: string, grid: G
             </div>;
     }
 
+    private clearGrid(): void {
+        this.restService.clear(0).then(response => {
+            this.setState({ grid: response });
+        });
+    }
+
     private renderButtons(): ReactElement<HTMLDivElement> {
         const style = {
             fontSize: '20px'
         };
 
         return <div className="right" style={style}>
-                <button className="btn btn-danger">Clear</button><br/>
+                <button className="btn btn-danger" onClick={this.clearGrid}>Clear</button><br/>
                 <button className="btn btn-secondary">Save</button><br/>
                 <button className="btn btn-secondary" disabled={this.state.grid.solved}>Solve</button><br/>
                 <button className="btn btn-primary">Reveal Cell</button><br/>
                 <button className="btn btn-success">Reveal Puzzle</button>
             </div>;
+    }
+
+    private updateCell = (event: any) => {
+        const x = event.target.value;
+    }
+
+    private selectCell = (event: any) => {
+        const y = event.target.value;
     }
 }

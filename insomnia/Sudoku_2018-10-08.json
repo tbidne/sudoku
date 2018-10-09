@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2018-09-23T13:31:40.195Z",
+	"__export_date": "2018-10-09T00:54:20.930Z",
 	"__export_source": "insomnia.desktop.app:v6.0.2",
 	"resources": [
 		{
@@ -44,7 +44,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1536860461994,
 			"method": "GET",
-			"modified": 1537205706139,
+			"modified": 1539031777697,
 			"name": "Blank Grid",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -54,7 +54,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/grid",
+			"url": "localhost:3001/grid",
 			"_type": "request"
 		},
 		{
@@ -67,7 +67,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1536860484697,
 			"method": "GET",
-			"modified": 1537205704072,
+			"modified": 1539035595356,
 			"name": "Health Check",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -77,7 +77,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/health",
+			"url": "localhost:3001/health",
 			"_type": "request"
 		},
 		{
@@ -90,7 +90,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1536955353970,
 			"method": "GET",
-			"modified": 1537230522664,
+			"modified": 1539003827662,
 			"name": "Grid by Id",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -100,7 +100,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/grid/0",
+			"url": "localhost:3001/grid/0",
 			"_type": "request"
 		},
 		{
@@ -123,7 +123,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1536955405509,
 			"method": "PUT",
-			"modified": 1537230592989,
+			"modified": 1539037241627,
 			"name": "Save Grid",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -133,7 +133,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/grid/0",
+			"url": "localhost:3001/grid/0",
 			"_type": "request"
 		},
 		{
@@ -146,7 +146,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1536955463612,
 			"method": "DELETE",
-			"modified": 1537230591863,
+			"modified": 1539031508145,
 			"name": "Delete Grid",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -156,7 +156,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/grid/1",
+			"url": "localhost:3001/grid/1",
 			"_type": "request"
 		},
 		{
@@ -178,7 +178,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1537230551713,
 			"method": "PUT",
-			"modified": 1537709357098,
+			"modified": 1539031517586,
 			"name": "Solve Grid",
 			"parameters": [],
 			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
@@ -188,7 +188,36 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "localhost:3000/grid/0/solve",
+			"url": "localhost:3001/grid/0/solve",
+			"_type": "request"
+		},
+		{
+			"_id": "req_ac10a60a2acd498a954508a65b95e27b",
+			"authentication": {},
+			"body": {},
+			"created": 1539031498266,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_0252dd45f13c4a94bad00993ae260193",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1539031498266,
+			"method": "PUT",
+			"modified": 1539035597202,
+			"name": "ClearGrid",
+			"parameters": [],
+			"parentId": "wrk_51516313f77a4d3c9c686bb3d3fe2930",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "localhost:3001/grid/0/clear",
 			"_type": "request"
 		}
 	]
