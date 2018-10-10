@@ -55,7 +55,10 @@ revealCell :: Connection -> Integer -> Domain.Cell -> Handler Domain.Cell
 revealCell _ _ = return
 
 revealGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
-revealGrid _ _ = return
+revealGrid conn id grid =
+  let revealed = Internal.revealGrid grid in
+  saveGrid conn id revealed >>= \_ ->
+  return revealed
 
 clearGrid :: Connection -> Integer -> Handler Domain.Grid
 clearGrid conn id =

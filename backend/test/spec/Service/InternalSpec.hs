@@ -168,6 +168,15 @@ spec = do
     --  result `shouldBe` True
     --  grid' `shouldSatisfy` gridEquals MSG.gridTwoSolved
 
+  describe "mark tests" $ do
+    it "should reveal cells where user and real values nonzero and equal" $ do
+      let result = markCellsRevealed mockCells
+      map Domain.revealed result `shouldBe` [False, True, False]
+
+    it "should reveal all where user and real values nonzero and equal" $ do
+      let result = revealAllCells mockCells
+      map Domain.revealed result `shouldBe` [True, True, True]
+
 mockGridT :: DB_Grid.GridT
 mockGridT = DB_Grid.GridT 1 True
 
@@ -177,9 +186,10 @@ mockCellTs = [c1, c2]
         c2 = DB_Cell.CellT 1 0 1 1 Nothing Nothing False
 
 mockCells :: [Domain.Cell]
-mockCells = [c1, c2]
-  where c1 = Domain.Cell 0 0 0 5 3 True
+mockCells = [c1, c2, c3]
+  where c1 = Domain.Cell 0 0 0 5 3 False
         c2 = Domain.Cell 1 1 1 2 2 False
+        c3 = Domain.Cell 1 1 1 0 0 False
 
 mockCellsWithEmpty :: [Domain.Cell]
 mockCellsWithEmpty = [c1, c2, c3]

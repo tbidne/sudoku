@@ -8,6 +8,10 @@ module Service.Internal
 , getSolvedGrid
 , validate
 , validateSection
+, revealGrid
+, markGridSolved
+, markCellsRevealed
+, revealAllCells
 )
 where
 
@@ -51,17 +55,12 @@ solve :: Domain.Grid -> Maybe Domain.Grid
 solve grid =
   let cells = Domain.cells grid in
   case getEmptyCell cells of
-    Nothing -> if validate grid then Just $ solvedGrid grid else Nothing
+    Nothing -> if validate grid then Just $ markGridSolved grid else Nothing
     Just empty ->
       let allGuesses = allGuessesForCell grid empty in
       let filtered = filter validate allGuesses in
       let possibleSolns = map solve filtered in
       getSolvedGrid possibleSolns
-
-solvedGrid :: Domain.Grid -> Domain.Grid
-solvedGrid grid = Domain.Grid id cells True
-  where id = Domain.gridId grid
-        cells = Domain.cells grid
 
 -- TODO: make this (boxes) better
 validate :: Domain.Grid -> Bool
@@ -139,3 +138,29 @@ takeFirst _ [] = Nothing
 takeFirst f (a:as)
   | f a       = Just a
   | otherwise = takeFirst f as
+
+-- mark grid functions
+
+revealGrid :: Domain.Grid -> Domain.Grid
+revealGrid grid = Domain.Grid id cells True
+  where id = Domain.gridId grid
+        cells = revealAllCells $ Domain.cells grid
+
+markGridSolved :: Domain.Grid -> Domain.Grid
+markGridSolved grid = Domain.Grid id cells True
+  where id = Domain.gridId grid
+        cells = markCellsRevealed $ Domain.cells grid
+
+markCellsRevealed :: [Domain.Cell] -> [Domain.Cell]
+markCellsRevealed = markCells f
+  where f c = Domain.userValue c == Domain.realValue c && Domain.realValue c /= 0
+
+revealAllCells :: [Domain.Cell] -> [Domain.Cell]
+revealAllCells = markCells f
+  where f _ = True
+
+markCells :: (Domain.Cell -> Bool) -> [Domain.Cell] -> [Domain.Cell]
+markCells f = map newCell
+  where newCell c = Domain.Cell (Domain.cellId c) (Domain.row c)
+          (Domain.col c) (Domain.realValue c) (Domain.userValue c)
+          (f c)
