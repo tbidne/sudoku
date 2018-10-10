@@ -90,7 +90,7 @@ spec = do
       getEmptyCell [] `shouldBe` Nothing
 
     it "getEmptyCell for list with no empty cells should return Nothing" $ do
-      let cells = mockCells
+      let cells = mockCellsWithoutEmpty
       let results = getEmptyCell cells
 
       results `shouldBe` Nothing
@@ -190,6 +190,11 @@ mockCells = [c1, c2, c3]
   where c1 = Domain.Cell 0 0 0 5 3 False
         c2 = Domain.Cell 1 1 1 2 2 False
         c3 = Domain.Cell 1 1 1 0 0 False
+
+mockCellsWithoutEmpty :: [Domain.Cell]
+mockCellsWithoutEmpty = [c1, c2]
+  where c1 = Domain.Cell 0 0 0 5 3 False
+        c2 = Domain.Cell 1 1 1 2 2 False
 
 mockCellsWithEmpty :: [Domain.Cell]
 mockCellsWithEmpty = [c1, c2, c3]
