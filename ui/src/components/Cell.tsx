@@ -28,9 +28,10 @@ export default class Cell extends React.Component<ICell, {}> {
                 max={9}
                 height="md"
                 width="md"
+                placeholder=""
                 value={this.getShownValue()}
                 disabled={this.props.revealed}
-                onChange={this.props.onChange}
+                onChange={this.props.onChange(this.props.cellId)}
                 onSelect={this.props.onSelect}
             />
         );
@@ -48,6 +49,6 @@ export default class Cell extends React.Component<ICell, {}> {
         if (this.props.revealed) {
             return this.props.realValue;
         }
-        return this.props.userValue > 0 ? this.props.userValue : '';
+        return this.props.userValue > 0 ? this.props.userValue : undefined;
     }
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, SyntheticEvent } from 'react';
+import { ReactElement } from 'react';
 import { CellDto } from '../domain/cell.dto';
 import { GridDto } from '../domain/grid.dto';
 import { RestService } from '../services/rest.service';
@@ -22,6 +22,8 @@ export default class Grid extends React.Component<{}, IGridState> {
         this.state = { message: '', grid: new GridDto(), selectedCell: -1 };
 
         this.clearGrid = this.clearGrid.bind(this);
+        this.save = this.save.bind(this);
+        this.solve = this.solve.bind(this);
 
         this.restService = new RestService();
         this.restService.health().then(response => {
@@ -111,6 +113,20 @@ export default class Grid extends React.Component<{}, IGridState> {
         });
     }
 
+    private save(): void {
+        this.restService.save(0, this.state.grid);
+    }
+
+    private solve(): void {
+        const grid = this.state.grid;
+        grid.cells.forEach(c => {
+            c.realValue = c.userValue;
+        });
+        this.restService.solve(0, grid).then(response => {
+            this.setState({ grid: response });
+        });
+    }
+
     private renderButtons(): ReactElement<HTMLDivElement> {
         const style = {
             fontSize: '20px'
@@ -118,15 +134,18 @@ export default class Grid extends React.Component<{}, IGridState> {
 
         return <div className="right" style={style}>
                 <button className="btn btn-danger" onClick={this.clearGrid}>Clear</button><br/>
-                <button className="btn btn-secondary">Save</button><br/>
-                <button className="btn btn-secondary" disabled={this.state.grid.solved}>Solve</button><br/>
+                <button className="btn btn-secondary" onClick={this.save}>Save</button><br/>
+                <button className="btn btn-secondary" onClick={this.solve}
+                    disabled={this.state.grid.solved}>Solve</button><br/>
                 <button className="btn btn-primary">Reveal Cell</button><br/>
                 <button className="btn btn-success">Reveal Puzzle</button>
             </div>;
     }
 
-    private updateCell = (event: any) => {
-        const x = event.target.value;
+    private updateCell = (id: number) => (event: any) => {
+        const cell = this.state.grid.cells.filter(c => c.cellId === id)[0];
+        cell.userValue = +event.target.value;
+        this.renderCell(cell.cellId, cell.row, cell.col, cell.realValue, cell.userValue, cell.revealed);
     }
 
     private selectCell = (event: any) => {
