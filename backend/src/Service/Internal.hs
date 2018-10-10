@@ -50,7 +50,6 @@ cellTToCell cellTs = Just $ map (\cellT ->
 
 -- main solving
 
--- remember to make set flag true here
 solve :: Domain.Grid -> Maybe Domain.Grid
 solve grid =
   let cells = Domain.cells grid in
@@ -130,7 +129,7 @@ getSolvedGrid (g:gs) =
 
 getEmptyCell :: [Domain.Cell] -> Maybe Domain.Cell
 getEmptyCell [] = Nothing
-getEmptyCell cells = takeFirst (\c -> Domain.realValue c == -1) cells
+getEmptyCell cells = takeFirst (\c -> Domain.realValue c `elem` [-1, 0]) cells
 
 -- TODO: maybe swap with take 1 $ ...
 takeFirst :: (a -> Bool) -> [a] -> Maybe a

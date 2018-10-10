@@ -26,8 +26,6 @@ export default class Cell extends React.Component<ICell, {}> {
                 name={this.getId()}
                 min={1}
                 max={9}
-                height="md"
-                width="md"
                 placeholder=""
                 value={this.getShownValue()}
                 disabled={this.props.revealed}
@@ -49,6 +47,6 @@ export default class Cell extends React.Component<ICell, {}> {
         if (this.props.revealed) {
             return this.props.realValue;
         }
-        return this.props.userValue > 0 ? this.props.userValue : undefined;
+        return this.props.userValue > 0 ? this.props.userValue : '';
     }
 }

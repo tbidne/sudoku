@@ -31,4 +31,9 @@ export class RestService {
         const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/solve`, grid);
         return response.data;
     }
+
+    public async revealAll(id: number, grid: GridDto): Promise<GridDto> {
+        const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/reveal`, grid);
+        return response.data;
+    }
 }

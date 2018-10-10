@@ -24,6 +24,7 @@ export default class Grid extends React.Component<{}, IGridState> {
         this.clearGrid = this.clearGrid.bind(this);
         this.save = this.save.bind(this);
         this.solve = this.solve.bind(this);
+        this.revealAll = this.revealAll.bind(this);
 
         this.restService = new RestService();
         this.restService.health().then(response => {
@@ -127,6 +128,12 @@ export default class Grid extends React.Component<{}, IGridState> {
         });
     }
 
+    private revealAll(): void {
+        this.restService.revealAll(0, this.state.grid).then(response => {
+            this.setState({ grid: response });
+        });
+    }
+
     private renderButtons(): ReactElement<HTMLDivElement> {
         const style = {
             fontSize: '20px'
@@ -138,13 +145,14 @@ export default class Grid extends React.Component<{}, IGridState> {
                 <button className="btn btn-secondary" onClick={this.solve}
                     disabled={this.state.grid.solved}>Solve</button><br/>
                 <button className="btn btn-primary">Reveal Cell</button><br/>
-                <button className="btn btn-success">Reveal Puzzle</button>
+                <button className="btn btn-success" onClick={this.revealAll}>Reveal Puzzle</button>
             </div>;
     }
 
     private updateCell = (id: number) => (event: any) => {
         const cell = this.state.grid.cells.filter(c => c.cellId === id)[0];
         cell.userValue = +event.target.value;
+        this.setState({ grid: this.state.grid });
         this.renderCell(cell.cellId, cell.row, cell.col, cell.realValue, cell.userValue, cell.revealed);
     }
 
