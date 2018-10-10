@@ -9,7 +9,7 @@ import Cell from './Cell';
 interface IGridState {
     message: string,
     grid: GridDto,
-    selectedCell: number
+    selectedCellId: number
 }
 
 export default class Grid extends React.Component<{}, IGridState> {
@@ -19,11 +19,12 @@ export default class Grid extends React.Component<{}, IGridState> {
     constructor(props: any) {
         super(props);
 
-        this.state = { message: '', grid: new GridDto(), selectedCell: -1 };
+        this.state = { message: '', grid: new GridDto(), selectedCellId: -1 };
 
         this.clearGrid = this.clearGrid.bind(this);
         this.save = this.save.bind(this);
         this.solve = this.solve.bind(this);
+        this.revealCell = this.revealCell.bind(this);
         this.revealAll = this.revealAll.bind(this);
 
         this.restService = new RestService();
@@ -40,7 +41,7 @@ export default class Grid extends React.Component<{}, IGridState> {
 
         return <Cell cellId = {cellId} row={row} col={col} realValue={realValue}
         userValue={userValue} revealed={revealed} key={cellId}
-        onChange={this.updateCell} onSelect={this.selectCell}/>;
+        onChange={this.updateCell} onSelect={this.selectCell} onBlur={this.deselectCell}/>;
     }
 
     public render() {
@@ -65,6 +66,10 @@ export default class Grid extends React.Component<{}, IGridState> {
                 </div>
             </div>
         );
+    }
+
+    public componentWillUnmount() {
+        // test
     }
 
     private renderCells(cells: CellDto[]): JSX.Element[] {
@@ -128,6 +133,21 @@ export default class Grid extends React.Component<{}, IGridState> {
         });
     }
 
+    private revealCell(): void {
+        const cell = this.state.grid.cells.find(c => c.cellId === this.state.selectedCellId);
+        if (!cell) {
+            return;
+        }
+
+        this.restService.revealCell(cell.cellId, cell).then(response => {
+            const newGrid = this.state.grid;
+            const newCells = newGrid.cells.filter(c => c.cellId !== response.cellId);
+            newCells.push(response);
+            newGrid.cells = newCells;
+            this.setState({ grid: newGrid });
+        });
+    }
+
     private revealAll(): void {
         this.restService.revealAll(0, this.state.grid).then(response => {
             this.setState({ grid: response });
@@ -140,13 +160,35 @@ export default class Grid extends React.Component<{}, IGridState> {
         };
 
         return <div className="right" style={style}>
-                <button className="btn btn-danger" onClick={this.clearGrid}>Clear</button><br/>
-                <button className="btn btn-secondary" onClick={this.save}>Save</button><br/>
-                <button className="btn btn-secondary" onClick={this.solve}
-                    disabled={this.state.grid.solved}>Solve</button><br/>
-                <button className="btn btn-primary">Reveal Cell</button><br/>
-                <button className="btn btn-success" onClick={this.revealAll}>Reveal Puzzle</button>
+                <button className="btn btn-danger"
+                    onClick={this.clearGrid}>
+                    Clear
+                </button><br/>
+                <button className="btn btn-secondary"
+                    onClick={this.solve}
+                    disabled={this.state.grid.solved}>
+                    Solve
+                </button><br/>
+                <button className="btn btn-secondary"
+                    onClick={this.save}
+                    disabled={!this.state.grid.solved || this.allRevealed()}>
+                    Save
+                </button><br/>
+                <button className="btn btn-primary" /* mousedown needed because blur */
+                    onMouseDown={this.revealCell}   /* and disabled disrupts click   */
+                    disabled={!this.canRevealCell()}>
+                    Reveal Cell
+                </button><br/>
+                <button className="btn btn-success"
+                    onClick={this.revealAll}
+                    disabled={!this.state.grid.solved || this.allRevealed()}>
+                    Reveal Puzzle
+                </button>
             </div>;
+    }
+
+    private allRevealed(): boolean {
+        return this.state.grid.cells.every(c => c.revealed);
     }
 
     private updateCell = (id: number) => (event: any) => {
@@ -156,7 +198,17 @@ export default class Grid extends React.Component<{}, IGridState> {
         this.renderCell(cell.cellId, cell.row, cell.col, cell.realValue, cell.userValue, cell.revealed);
     }
 
-    private selectCell = (event: any) => {
-        const y = event.target.value;
+    private selectCell = (id: number) => (event: any) => {
+        this.setState({ selectedCellId: id });
+    }
+
+    private deselectCell = (event: any) => {
+        this.setState({ selectedCellId: -1 });
+    }
+
+    private canRevealCell(): boolean {
+        const selected = this.state.grid.cells.find(c => c.cellId === this.state.selectedCellId);
+        const selectedAndNotRevealed = selected ? !selected.revealed : false;
+        return this.state.grid.solved && selectedAndNotRevealed;
     }
 }

@@ -10,6 +10,7 @@ interface ICell {
     revealed: boolean;
     onChange: any;
     onSelect: any;
+    onBlur: any;
 }
 
 export default class Cell extends React.Component<ICell, {}> {
@@ -30,7 +31,8 @@ export default class Cell extends React.Component<ICell, {}> {
                 value={this.getShownValue()}
                 disabled={this.props.revealed}
                 onChange={this.props.onChange(this.props.cellId)}
-                onSelect={this.props.onSelect}
+                onSelect={this.props.onSelect(this.props.cellId)}
+                onBlur={this.props.onBlur}
             />
         );
     }

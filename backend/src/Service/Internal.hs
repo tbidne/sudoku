@@ -8,6 +8,7 @@ module Service.Internal
 , getSolvedGrid
 , validate
 , validateSection
+, revealCell
 , revealGrid
 , markGridSolved
 , markCellsRevealed
@@ -144,6 +145,14 @@ revealGrid :: Domain.Grid -> Domain.Grid
 revealGrid grid = Domain.Grid id cells True
   where id = Domain.gridId grid
         cells = revealAllCells $ Domain.cells grid
+
+revealCell :: Domain.Cell -> Domain.Cell
+revealCell cell = Domain.Cell id row col realValue userValue True
+  where id = Domain.cellId cell
+        row = Domain.row cell
+        col = Domain.col cell
+        realValue = Domain.realValue cell
+        userValue = Domain.userValue cell
 
 markGridSolved :: Domain.Grid -> Domain.Grid
 markGridSolved grid = Domain.Grid id cells True

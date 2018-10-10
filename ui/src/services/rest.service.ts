@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { CellDto } from '../domain/cell.dto';
 import { GridDto } from '../domain/grid.dto';
 
 export class RestService {
@@ -29,6 +30,11 @@ export class RestService {
 
     public async solve(id: number, grid: GridDto): Promise<GridDto> {
         const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/solve`, grid);
+        return response.data;
+    }
+
+    public async revealCell(id: number, cell: CellDto): Promise<CellDto> {
+        const response = await axios.put<CellDto>(`http://localhost:3001/cell/${id}/reveal`, cell);
         return response.data;
     }
 

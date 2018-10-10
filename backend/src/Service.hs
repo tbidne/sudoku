@@ -52,7 +52,10 @@ solveGrid conn id grid =
       return solved
 
 revealCell :: Connection -> Integer -> Domain.Cell -> Handler Domain.Cell
-revealCell _ _ = return
+revealCell conn id cell =
+  let revealed = Internal.revealCell cell in
+  liftIO (DB.saveCell conn id revealed) >>= \_ ->
+  return revealed
 
 revealGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 revealGrid conn id grid =

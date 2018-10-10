@@ -5,6 +5,7 @@ module Database
 ( deleteGrid
 , getGridById
 , saveGrid
+, saveCell
 , getCellsByGridId
 , saveCells
 , GridT(..)
@@ -50,6 +51,10 @@ getGridById conn id = query conn "SELECT * FROM grid WHERE grid.id = ?" [id]
 saveGrid :: Connection -> Integer -> Domain.Grid -> IO Int64
 saveGrid conn id grid = execute conn "UPDATE grid SET solved = ? WHERE id = ?" (s, id)
   where s = Domain.solved grid
+
+saveCell :: Connection -> Integer -> Domain.Cell -> IO Int64
+saveCell conn id cell = execute conn "UPDATE cell SET revealed = ? WHERE id = ?" (r, id)
+   where r = Domain.revealed cell
 
 saveCells :: Connection -> [Domain.Cell] -> IO Int64
 saveCells conn cells = executeMany conn q vals
