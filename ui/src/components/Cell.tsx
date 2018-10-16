@@ -20,14 +20,13 @@ export default class Cell extends React.Component<ICell, {}> {
 
     public render() {
         return (
-            <input
+            <input style={{height: 40, width: 40}}
                 className={this.getClassName()}
-                type="number"
+                type="text"
                 id={this.getId()}
                 name={this.getId()}
-                min={1}
-                max={9}
                 placeholder=""
+                maxLength={1}
                 value={this.getShownValue()}
                 disabled={this.props.revealed}
                 onChange={this.props.onChange(this.props.cellId)}

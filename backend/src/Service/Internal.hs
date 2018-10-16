@@ -25,7 +25,7 @@ import qualified Database as DB_Grid (GridT(..))
 blankGrid :: Domain.Grid
 blankGrid = Domain.Grid 0 cells False
   where initCells = zipWith (\id (row, col) -> Domain.Cell id row col 0 0 False)
-        cells = initCells [0..] [(x, y) | x <- [1..9], y <- [1..9]]
+        cells = initCells [0..] [(x, y) | x <- [0..8], y <- [0..8]]
 
 -- transformers
 

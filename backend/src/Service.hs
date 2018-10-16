@@ -2,7 +2,6 @@ module Service
 ( health
 , getGridById
 , saveGrid
-, deleteGrid
 , solveGrid
 , revealCell
 , revealGrid
@@ -37,9 +36,6 @@ saveGrid conn id grid =
   liftIO (DB.saveGrid conn id grid) >>= \x ->
   liftIO (DB.saveCells conn $ Domain.cells grid) >>= \y ->
   return (x + y)
-
-deleteGrid :: Connection -> Integer -> Handler Int64
-deleteGrid conn id = liftIO $ DB.deleteGrid conn id
 
 solveGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 solveGrid conn id grid =

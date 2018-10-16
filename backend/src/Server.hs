@@ -37,7 +37,6 @@ server conn =
   Service.health :<|>
   Service.getGridById conn :<|>
   Service.saveGrid conn :<|>
-  Service.deleteGrid conn :<|>
   Service.solveGrid conn :<|>
   Service.revealCell conn :<|>
   Service.revealGrid conn :<|>
