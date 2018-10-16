@@ -20,7 +20,7 @@ export default class Cell extends React.Component<ICell, {}> {
 
     public render() {
         return (
-            <input style={{height: 40, width: 40}}
+            <input style={{height: 40, width: 40, textAlign: 'center'}}
                 className={this.getClassName()}
                 type="text"
                 id={this.getId()}
