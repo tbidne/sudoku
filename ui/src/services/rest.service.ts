@@ -1,45 +1,35 @@
-import axios from 'axios';
+import Axios from 'axios-observable';
+import { AxiosObservable } from 'axios-observable/dist/axios-observable.interface';
 import { CellDto } from '../domain/cell.dto';
 import { GridDto } from '../domain/grid.dto';
 
 export class RestService {
 
-    public async health(): Promise<string> {
-        try {
-            const response = await axios.get<string>('http://localhost:3001/health');
-            return response.status === 200 ? response.data : `/health returned http ${response.status}`;
-        } catch (e) {
-            return `Something went wrong: ${e.message}`;
-        }
+    public health(): AxiosObservable<string> {
+        return Axios.get<string>('http://localhost:3001/health');
     }
 
-    public async getGrid(id: number): Promise<GridDto> {
-        const response = await axios.get<GridDto>(`http://localhost:3001/grid/${id}`);
-        return response.data;
+    public getGrid(id: number): AxiosObservable<GridDto> {
+        return Axios.get<GridDto>(`http://localhost:3001/grid/${id}`);
     }
 
-    public async clear(id: number): Promise<GridDto> {
-        const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/clear`);
-        return response.data;
+    public clear(id: number): AxiosObservable<GridDto> {
+        return Axios.put<GridDto>(`http://localhost:3001/grid/${id}/clear`);
     }
 
-    public async save(id: number, grid: GridDto): Promise<GridDto> {
-        const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}`, grid);
-        return response.data;
+    public save(id: number, grid: GridDto): AxiosObservable<GridDto> {
+        return Axios.put<GridDto>(`http://localhost:3001/grid/${id}`, grid);
     }
 
-    public async solve(id: number, grid: GridDto): Promise<GridDto> {
-        const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/solve`, grid);
-        return response.data;
+    public solve(id: number, grid: GridDto): AxiosObservable<GridDto> {
+        return Axios.put<GridDto>(`http://localhost:3001/grid/${id}/solve`, grid);
     }
 
-    public async revealCell(id: number, cell: CellDto): Promise<CellDto> {
-        const response = await axios.put<CellDto>(`http://localhost:3001/cell/${id}/reveal`, cell);
-        return response.data;
+    public revealCell(id: number, cell: CellDto): AxiosObservable<CellDto> {
+        return Axios.put<CellDto>(`http://localhost:3001/cell/${id}/reveal`, cell);
     }
 
-    public async revealAll(id: number, grid: GridDto): Promise<GridDto> {
-        const response = await axios.put<GridDto>(`http://localhost:3001/grid/${id}/reveal`, grid);
-        return response.data;
+    public revealAll(id: number, grid: GridDto): AxiosObservable<GridDto> {
+        return Axios.put<GridDto>(`http://localhost:3001/grid/${id}/reveal`, grid);
     }
 }

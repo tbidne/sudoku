@@ -1,5 +1,7 @@
+import axios from 'axios';
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { Subscription } from 'rxjs';
 import { CellDto } from '../domain/cell.dto';
 import { GridDto } from '../domain/grid.dto';
 import { RestService } from '../services/rest.service';
@@ -15,6 +17,7 @@ interface IGridState {
 export default class Grid extends React.Component<{}, IGridState> {
 
     private restService: RestService;
+    private subscriptions: Subscription[] = [];
 
     constructor(props: any) {
         super(props);
@@ -28,12 +31,12 @@ export default class Grid extends React.Component<{}, IGridState> {
         this.revealAll = this.revealAll.bind(this);
 
         this.restService = new RestService();
-        this.restService.health().then(response => {
-            this.setState({ message: response });
-        });
-        this.restService.getGrid(0).then(response => {
-            this.setState({ grid: response });
-        });
+        this.subscriptions.push(this.restService.health().subscribe(response => {
+            this.setState({ message: response.data });
+        }));
+        this.subscriptions.push(this.restService.getGrid(0).subscribe(response => {
+            this.setState({ grid: response.data });
+        }));
     }
 
     public renderCell(cellId: number, row: number, col: number,
@@ -69,7 +72,7 @@ export default class Grid extends React.Component<{}, IGridState> {
     }
 
     public componentWillUnmount() {
-        // test
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
     private renderCells(cells: CellDto[]): JSX.Element[] {
@@ -114,9 +117,9 @@ export default class Grid extends React.Component<{}, IGridState> {
     }
 
     private clearGrid(): void {
-        this.restService.clear(0).then(response => {
-            this.setState({ grid: response });
-        });
+        this.subscriptions.push(this.restService.clear(0).subscribe(response => {
+            this.setState({ grid: response.data });
+        }));
     }
 
     private save(): void {
@@ -128,9 +131,9 @@ export default class Grid extends React.Component<{}, IGridState> {
         grid.cells.forEach(c => {
             c.realValue = c.userValue;
         });
-        this.restService.solve(0, grid).then(response => {
-            this.setState({ grid: response });
-        });
+        this.subscriptions.push(this.restService.solve(0, grid).subscribe(response => {
+            this.setState({ grid: response.data });
+        }));
     }
 
     private revealCell(): void {
@@ -139,19 +142,19 @@ export default class Grid extends React.Component<{}, IGridState> {
             return;
         }
 
-        this.restService.revealCell(cell.cellId, cell).then(response => {
+        this.subscriptions.push(this.restService.revealCell(cell.cellId, cell).subscribe(response => {
             const newGrid = this.state.grid;
-            const newCells = newGrid.cells.filter(c => c.cellId !== response.cellId);
-            newCells.push(response);
+            const newCells = newGrid.cells.filter(c => c.cellId !== response.data.cellId);
+            newCells.push(response.data);
             newGrid.cells = newCells;
             this.setState({ grid: newGrid });
-        });
+        }));
     }
 
     private revealAll(): void {
-        this.restService.revealAll(0, this.state.grid).then(response => {
-            this.setState({ grid: response });
-        });
+        this.subscriptions.push(this.restService.revealAll(0, this.state.grid).subscribe(response => {
+            this.setState({ grid: response.data });
+        }));
     }
 
     private renderButtons(): ReactElement<HTMLDivElement> {
