@@ -1,30 +1,15 @@
 sudo: true
-matrix:
-  include:
-    - language: c
-    cache:
-      directories:
-      - $HOME/.stack
-    before_install:
-      # Download and unpack the stack executable
-      - mkdir -p ~/.local/bin
-      - export PATH=$HOME/.local/bin:$PATH
-      - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-    before_script:
-      - cd backend
-    script:
-      - stack build --ghc-options="-O2 -Wall -Werror -fwarn-tabs" --test :spec
-    
-    - language: node_js
-    node_js:
-      - 8
-    cache:
-      directories:
-        - node_modules
-    before_script:
-      - cd ui
-      - npm install
-    script:
-      # $CI should be true so this won't watch by default
-      - npm run build
-      - npm test
+- language: c
+cache:
+  directories:
+  - $HOME/.stack
+  - ui/node_modules
+before_install:
+  # Download and unpack the stack executable
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  # npm
+  - cd ui && npm install
+script:
+  - scripts/runTests.sh
