@@ -41,26 +41,21 @@ solveGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 solveGrid conn id grid =
   case Internal.solve grid of
     Nothing ->
-      liftIO (putStrLn "Could not solve grid!") >>= \_ ->
-      throwError err500
+      liftIO (putStrLn "Could not solve grid!") >> throwError err500
     Just solved -> 
-      saveGrid conn id solved >>= \_ ->
-      return solved
+      saveGrid conn id solved >> return solved
 
 revealCell :: Connection -> Integer -> Domain.Cell -> Handler Domain.Cell
 revealCell conn id cell =
   let revealed = Internal.revealCell cell in
-  liftIO (DB.saveCell conn id revealed) >>= \_ ->
-  return revealed
+  liftIO (DB.saveCell conn id revealed) >> return revealed
 
 revealGrid :: Connection -> Integer -> Domain.Grid -> Handler Domain.Grid
 revealGrid conn id grid =
   let revealed = Internal.revealGrid grid in
-  saveGrid conn id revealed >>= \_ ->
-  return revealed
+  saveGrid conn id revealed >> return revealed
 
 clearGrid :: Connection -> Integer -> Handler Domain.Grid
 clearGrid conn id =
   let newGrid = Internal.blankGrid in
-  saveGrid conn id newGrid >>= \_ ->
-  return newGrid
+  saveGrid conn id newGrid >> return newGrid
