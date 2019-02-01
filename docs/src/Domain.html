@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DeriveGeneric #-}</span><span>
+</span><a name="line-2"></a><span>
+</span><a name="line-3"></a><span class="hs-comment">{-|
+Module      : Domain
+Description : Sudoku Domain Types
+License     : MIT
+Maintainer  : tbidne@gmail.com
+
+Contains the data declarations for Sudoku Grid and Cell
+-}</span><span>
+</span><a name="line-11"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Domain</span><span>
+</span><a name="line-12"></a><span class="hs-special">(</span><span> </span><a href="Domain.html#Grid"><span class="hs-identifier hs-type">Grid</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><a name="line-13"></a><span class="hs-special">,</span><span> </span><a href="Domain.html#Cell"><span class="hs-identifier hs-type">Cell</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span>
+</span><a name="line-14"></a><span class="hs-special">)</span><span>
+</span><a name="line-15"></a><span class="hs-keyword">where</span><span>
+</span><a name="line-16"></a><span>
+</span><a name="line-17"></a><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">GHC.Generics</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
+</span><a name="line-18"></a><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">Data.Aeson</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">FromJSON</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">ToJSON</span><span class="hs-special">)</span><span>
+</span><a name="line-19"></a><span>
+</span><a name="line-20"></a><span class="hs-comment">-- | Represents a Sudoku Grid.</span><span>
+</span><a name="line-21"></a><span class="hs-comment">--</span><span>
+</span><a name="line-22"></a><span class="hs-comment">-- 'Int' @gridId@: id for the grid.</span><span>
+</span><a name="line-23"></a><span class="hs-comment">--</span><span>
+</span><a name="line-24"></a><span class="hs-comment">-- ['Cell'] @cells@: list of all cells for the grid.</span><span>
+</span><a name="line-25"></a><span class="hs-comment">--</span><span>
+</span><a name="line-26"></a><span class="hs-comment">-- 'Bool' @solved@: indicates if this grid has been solved.</span><span>
+</span><a name="line-27"></a><span class="hs-keyword">data</span><span> </span><a name="Grid"><a href="Domain.html#Grid"><span class="hs-identifier">Grid</span></a></a><span>
+</span><a name="line-28"></a><span>  </span><span class="hs-glyph">=</span><span> </span><a name="Grid"><a href="Domain.html#Grid"><span class="hs-identifier">Grid</span></a></a><span> </span><span class="hs-special">{</span><span>
+</span><a name="line-29"></a><span>    </span><a name="gridId"><a href="Domain.html#gridId"><span class="hs-identifier">gridId</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-30"></a><span>    </span><a name="cells"><a href="Domain.html#cells"><span class="hs-identifier">cells</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><a href="Domain.html#Cell"><span class="hs-identifier hs-type">Cell</span></a><span class="hs-special">]</span><span class="hs-special">,</span><span>
+</span><a name="line-31"></a><span>    </span><a name="solved"><a href="Domain.html#solved"><span class="hs-identifier">solved</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Bool</span><span>
+</span><a name="line-32"></a><span>  </span><span class="hs-special">}</span><span>
+</span><a name="line-33"></a><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Eq</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Show</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
+</span><a name="line-34"></a><span>
+</span><a name="line-35"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">ToJSON</span><span> </span><a href="Domain.html#Grid"><span class="hs-identifier hs-type">Grid</span></a><span>
+</span><a name="line-36"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="Domain.html#Grid"><span class="hs-identifier hs-type">Grid</span></a><span>
+</span><a name="line-37"></a><span>
+</span><a name="line-38"></a><span class="hs-comment">-- | Represents a Sudoku Cell.</span><span>
+</span><a name="line-39"></a><span class="hs-comment">--</span><span>
+</span><a name="line-40"></a><span class="hs-comment">-- 'Int' @cellId@: cell's id.</span><span>
+</span><a name="line-41"></a><span class="hs-comment">--</span><span>
+</span><a name="line-42"></a><span class="hs-comment">-- 'Int' @row@: cell's row.</span><span>
+</span><a name="line-43"></a><span class="hs-comment">--</span><span>
+</span><a name="line-44"></a><span class="hs-comment">-- 'Int' @col@: cell's column.</span><span>
+</span><a name="line-45"></a><span class="hs-comment">--</span><span>
+</span><a name="line-46"></a><span class="hs-comment">-- 'Int' @realValue@: cell's real value if it's been solved, otherwise -1 (DB) or 0 (UI).</span><span>
+</span><a name="line-47"></a><span class="hs-comment">--</span><span>
+</span><a name="line-48"></a><span class="hs-comment">-- 'Int' @userValue@: cell's user provided value, otherwise -1.</span><span>
+</span><a name="line-49"></a><span class="hs-comment">--</span><span>
+</span><a name="line-50"></a><span class="hs-comment">-- 'Bool' @revealed@: indicates if this grid has been revealed.</span><span>
+</span><a name="line-51"></a><span class="hs-keyword">data</span><span> </span><a name="Cell"><a href="Domain.html#Cell"><span class="hs-identifier">Cell</span></a></a><span>
+</span><a name="line-52"></a><span>  </span><span class="hs-glyph">=</span><span> </span><a name="Cell"><a href="Domain.html#Cell"><span class="hs-identifier">Cell</span></a></a><span> </span><span class="hs-special">{</span><span>
+</span><a name="line-53"></a><span>    </span><a name="cellId"><a href="Domain.html#cellId"><span class="hs-identifier">cellId</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-54"></a><span>    </span><a name="row"><a href="Domain.html#row"><span class="hs-identifier">row</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-55"></a><span>    </span><a name="col"><a href="Domain.html#col"><span class="hs-identifier">col</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-56"></a><span>    </span><a name="realValue"><a href="Domain.html#realValue"><span class="hs-identifier">realValue</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-57"></a><span>    </span><a name="userValue"><a href="Domain.html#userValue"><span class="hs-identifier">userValue</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Int</span><span class="hs-special">,</span><span>
+</span><a name="line-58"></a><span>    </span><a name="revealed"><a href="Domain.html#revealed"><span class="hs-identifier">revealed</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Bool</span><span>
+</span><a name="line-59"></a><span>  </span><span class="hs-special">}</span><span>
+</span><a name="line-60"></a><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Eq</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Show</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
+</span><a name="line-61"></a><span>
+</span><a name="line-62"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">ToJSON</span><span> </span><a href="Domain.html#Cell"><span class="hs-identifier hs-type">Cell</span></a><span>
+</span><a name="line-63"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="Domain.html#Cell"><span class="hs-identifier hs-type">Cell</span></a></pre></body></html>

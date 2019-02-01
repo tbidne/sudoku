@@ -1,5 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+{-|
+Module      : Server
+Description : Entry point for web server
+License     : MIT
+Maintainer  : tbidne@gmail.com
+
+Entry point for web server
+-}
 module Server
 ( run
 )
@@ -16,7 +24,7 @@ import qualified Database.PostgreSQL.Simple as Postgres (ConnectInfo(..), connec
 import qualified API                                    (SudokuApi, sudokuApi)
 import qualified Service
 
-
+-- | Runs the server.
 run :: IO ()
 run = do
   let port = 3001

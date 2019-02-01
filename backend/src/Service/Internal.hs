@@ -1,3 +1,11 @@
+{-|
+Module      : API
+Description : Sudoku Internal functions
+License     : MIT
+Maintainer  : tbidne@gmail.com
+
+Contains internal functions for Sudoku.
+-}
 module Service.Internal
 ( blankGrid
 , gridTToGrid
@@ -11,7 +19,7 @@ module Service.Internal
 , revealCell
 , revealGrid
 , markGridSolved
-, markCellsRevealed
+, markCorrectCellsRevealed
 , revealAllCells
 )
 where
@@ -22,13 +30,14 @@ import qualified Domain              (Cell(..), Grid(..))
 import qualified Database as DB_Cell (CellT(..))
 import qualified Database as DB_Grid (GridT(..))
 
+-- | Returns a blank 'Domain.Grid'
 blankGrid :: Domain.Grid
 blankGrid = Domain.Grid 0 cells False
   where initCells = zipWith (\id (row, col) -> Domain.Cell id row col 0 0 False)
         cells = initCells [0..] [(x, y) | x <- [0..8], y <- [0..8]]
 
--- transformers
-
+-- | For a ['DB_Grid.GridT'] of size 1, and 'Just' ['Domain.Cell'], returns
+-- 'Just' 'Domain.Grid'. Otherwise returns 'Nothing'.
 gridTToGrid :: [DB_Grid.GridT] -> Maybe [Domain.Cell] -> Maybe Domain.Grid
 gridTToGrid _ Nothing = Nothing
 gridTToGrid [] _ = Nothing
@@ -37,6 +46,8 @@ gridTToGrid [gridT] (Just cells) = Just $ Domain.Grid id cells solved
           solved = DB_Grid.solved gridT
 gridTToGrid _ _ = Nothing
 
+-- | For a ['DB_Cell.CellT'], returns 'Just' ['Domain.Cell'].
+-- Otherwise returns 'Nothing'.
 cellTToCell :: [DB_Cell.CellT] -> Maybe [Domain.Cell]
 cellTToCell [] = Nothing
 cellTToCell cellTs = Just $ map (\cellT ->
@@ -51,6 +62,8 @@ cellTToCell cellTs = Just $ map (\cellT ->
 
 -- main solving
 
+-- | If 'Domain.Grid' @g@ can be solved returns 'Just' @g'@,
+-- where @g'@ is solved. Otherwise returns 'Nothing'.
 solve :: Domain.Grid -> Maybe Domain.Grid
 solve grid =
   let cells = Domain.cells grid in
@@ -62,44 +75,54 @@ solve grid =
       let possibleSolns = map solve filtered in
       getSolvedGrid possibleSolns
 
--- TODO: make this (boxes) better
+-- | Returns 'True' if the 'Domain.Grid' is valid by the rules of Sudoku,
+-- 'False' otherwise.
 validate :: Domain.Grid -> Bool
 validate grid = rowsValid && colsValid && boxesValid
   where cells = Domain.cells grid
-        fieldFnList f = replicate 9 (\x -> filter (\c -> f c == x) cells)
-        rows = zipWith (\f n -> f n) (fieldFnList Domain.row) [0..8]
-        cols = zipWith (\f n -> f n) (fieldFnList Domain.col) [0..8]
+        rows = groupCellsByFn cells [0..8] Domain.row
+        cols = groupCellsByFn cells [0..8] Domain.col
 
-        boxNW = filter (\c -> Domain.row c <= 2 && Domain.col c <= 2) cells
-        boxNC = filter (\c -> Domain.row c >= 3 && Domain.row c <= 5 && Domain.col c <= 2) cells
-        boxNE = filter (\c -> Domain.row c >= 6 && Domain.col c < 3) cells
-
-        boxCW = filter (\c -> Domain.row c <= 2 && Domain.col c >= 3 && Domain.col c <= 5) cells
-        boxCC = filter (\c -> Domain.row c >= 3 && Domain.row c <= 5 && Domain.col c >= 3 && Domain.col c <= 5) cells
-        boxCE = filter (\c -> Domain.row c >= 6 && Domain.col c >= 3 && Domain.col c <= 5) cells
-
-        boxSW = filter (\c -> Domain.row c <= 2 && Domain.col c >= 6) cells
-        boxSC = filter (\c -> Domain.row c >= 3 && Domain.row c <= 5 && Domain.col c >= 6) cells
-        boxSE = filter (\c -> Domain.row c >= 6 && Domain.col c >= 6) cells
-
+        boxNW = getBox cells 0 2 0 2
+        boxNC = getBox cells 0 2 3 5
+        boxNE = getBox cells 0 2 6 8
+        boxCW = getBox cells 3 5 0 2
+        boxCC = getBox cells 3 5 3 5
+        boxCE = getBox cells 3 5 6 8
+        boxSW = getBox cells 6 8 0 2
+        boxSC = getBox cells 6 8 3 5
+        boxSE = getBox cells 6 8 6 8
         boxes = [boxNW, boxNC, boxNE, boxCW, boxCC, boxCE, boxSW, boxSC, boxSE]
 
         rowsValid = foldr ((&&) . validateSection) True rows
         colsValid = foldr ((&&) . validateSection) True cols
         boxesValid = foldr ((&&) . validateSection) True boxes
 
--- this works by scanning a given section and making sure each 1 <= x <= 9 is in the list
--- uniqueValList is a list of lists, where each element is a list of all cells with that realValue
--- i.e., uniqueValList[0] has all cells with realValue 1`, uniqueValList[1] has all cells with realValue 2, ...
--- if a number is NOT in the list then that entry in uniqueValList will instead by the empty list
--- this means we can test for validity by asserting that each element has length < 2, i.e., no element in [1..9]
--- shows up more than once
+-- | For a 'Domain.Cell' 'section' (i.e., row, column, or box), returns 'True' if the section
+-- is valid, 'False' otherwise.
+--
+-- Works by filtering the ['Domain.Cell'] into [['Domain.Cell']] where each list contains
+-- the list of all cells with @realValue@ \(r \in {1,2,\ldots 9}\). After that we test that each
+-- list has length @< 2@.
 validateSection :: [Domain.Cell] -> Bool
-validateSection cells = foldr ((&&) . (\ x -> length x < 2)) True uniqueValList
-    where fnList = replicate 9 (\x -> filter (\c -> Domain.realValue c == x) cells)
-          uniqueValList = zipWith (\f n -> f n) fnList [1..9]
+validateSection cells = foldr ((&&) . (\xs -> length xs < 2)) True uniqueValList
+    where uniqueValList = groupCellsByFn cells [1..9] Domain.realValue
 
+-- | For ['Domain.Cell'] @cells@, ['Int'] @groups@, and cell function @f@, groups
+-- the cells by @f@ into @groups@.
+groupCellsByFn :: [Domain.Cell] -> [Int] -> (Domain.Cell -> Int) -> [[Domain.Cell]]
+groupCellsByFn cells groups f = [g y | y <- groups]
+  where g x = filter (\c -> f c == x) cells
 
+-- | Returns a Sudoku 'box' based on the range params, e.g., North West
+getBox :: [Domain.Cell] -> Int -> Int -> Int -> Int -> [Domain.Cell]
+getBox cells rLow rHigh cLow cHigh = filter f cells
+  where dr = Domain.row
+        dc = Domain.col
+        f c = dr c >= rLow && dr c <= rHigh && dc c >= cLow && dc c <= cHigh
+
+-- | For a @grid@ and @cell@, returns a list of grids where each new
+-- grid is all possible guesses for @cell@.
 allGuessesForCell :: Domain.Grid -> Domain.Cell -> [Domain.Grid]
 allGuessesForCell grid cell = guesses
   where cells = Domain.cells grid
@@ -121,31 +144,31 @@ guessHelper grid cells cell (x:xs) acc = guessHelper grid cells cell xs $ acc ++
                   (cells ++ [cell'])
                   False
 
+-- | Returns a solved grid, if any exists.
 getSolvedGrid :: [Maybe Domain.Grid] -> Maybe Domain.Grid
-getSolvedGrid [] = Nothing
-getSolvedGrid (g:gs) =
-  case g of
-    Nothing -> getSolvedGrid gs
-    Just grid -> Just grid
+getSolvedGrid = foldr f Nothing
+  where f (Just g) _ = Just g
+        f _ (Just g) = Just g
+        f _ _ = Nothing
 
+-- | Returns an empty cell, if any exists.
 getEmptyCell :: [Domain.Cell] -> Maybe Domain.Cell
-getEmptyCell [] = Nothing
-getEmptyCell cells = takeFirst (\c -> Domain.realValue c `elem` [-1, 0]) cells
-
--- TODO: maybe swap with take 1 $ ...
-takeFirst :: (a -> Bool) -> [a] -> Maybe a
-takeFirst _ [] = Nothing
-takeFirst f (a:as)
-  | f a       = Just a
-  | otherwise = takeFirst f as
+getEmptyCell cells = foldr f Nothing cells
+  where empty x = Domain.realValue x `elem` [-1,0]
+        f _ (Just c) = Just c
+        f c _
+          | empty c   = Just c
+          | otherwise = Nothing
 
 -- mark grid functions
 
+-- | Marks a grid as revealed.
 revealGrid :: Domain.Grid -> Domain.Grid
 revealGrid grid = Domain.Grid id cells True
   where id = Domain.gridId grid
         cells = revealAllCells $ Domain.cells grid
 
+-- | Marks a cell as revealed.
 revealCell :: Domain.Cell -> Domain.Cell
 revealCell cell = Domain.Cell id row col realValue userValue True
   where id = Domain.cellId cell
@@ -154,15 +177,18 @@ revealCell cell = Domain.Cell id row col realValue userValue True
         realValue = Domain.realValue cell
         userValue = Domain.userValue cell
 
+-- | Marks a grid as solved.
 markGridSolved :: Domain.Grid -> Domain.Grid
 markGridSolved grid = Domain.Grid id cells True
   where id = Domain.gridId grid
-        cells = markCellsRevealed $ Domain.cells grid
+        cells = markCorrectCellsRevealed $ Domain.cells grid
 
-markCellsRevealed :: [Domain.Cell] -> [Domain.Cell]
-markCellsRevealed = markCells f
+-- | Marks correct cells as revealed.
+markCorrectCellsRevealed :: [Domain.Cell] -> [Domain.Cell]
+markCorrectCellsRevealed = markCells f
   where f c = Domain.userValue c == Domain.realValue c && Domain.realValue c /= 0
 
+-- | Marks all cells as revealed.
 revealAllCells :: [Domain.Cell] -> [Domain.Cell]
 revealAllCells = markCells f
   where f _ = True
