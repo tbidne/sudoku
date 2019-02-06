@@ -111,7 +111,7 @@ validateSection cells = foldr ((&&) . (\xs -> length xs < 2)) True uniqueValList
 -- | For ['Domain.Cell'] @cells@, ['Int'] @groups@, and cell function @f@, groups
 -- the cells by @f@ into @groups@.
 groupCellsByFn :: [Domain.Cell] -> [Int] -> (Domain.Cell -> Int) -> [[Domain.Cell]]
-groupCellsByFn cells groups f = [g y | y <- groups]
+groupCellsByFn cells groups f = fmap g groups
   where g x = filter (\c -> f c == x) cells
 
 -- | Returns a Sudoku 'box' based on the range params, e.g., North West
