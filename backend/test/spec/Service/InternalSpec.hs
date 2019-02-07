@@ -174,10 +174,7 @@ specWithTravisEnv = do
       result `shouldSatisfy` isJust
       fromJust result `shouldSatisfy` gridEquals MSG.gridOneSolved
 
-    it "should solve real grid two" $ \case
-        True -> do
-          True `shouldBe` True -- this is too hard for travis apparently
-        False -> do
+    it "should solve real grid two" $ \_ -> do
           let result = solve MSG.gridTwoReal
           result `shouldSatisfy` isJust
           fromJust result `shouldSatisfy` gridEquals MSG.gridTwoSolved
