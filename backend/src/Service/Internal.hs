@@ -121,34 +121,33 @@ getBox cells rLow rHigh cLow cHigh = filter f cells
         dc = Domain.col
         f c = dr c >= rLow && dr c <= rHigh && dc c >= cLow && dc c <= cHigh
 
--- | For a @grid@ and @cell@, returns a list of grids where each new
+-- | For a @grid@ and @empty@, returns a list of grids where each new
 -- grid is all possible guesses for @cell@.
 allGuessesForCell :: Domain.Grid -> Domain.Cell -> [Domain.Grid]
-allGuessesForCell grid cell = guesses
-  where cells = Domain.cells grid
-        temp = filter (\c -> Domain.cellId c /= Domain.cellId cell) cells
-        guesses = guessHelper grid temp cell [1..9] []
+allGuessesForCell grid empty = map newGrid allGuesses
+  where oldCells = Domain.cells grid
+        nonEmpty = filter (\c -> Domain.cellId c /= Domain.cellId empty) oldCells
+        allGuesses = guessHelper nonEmpty empty
+        newGrid c = Domain.Grid
+          (Domain.gridId grid)
+          c
+          False
 
-guessHelper :: Domain.Grid -> [Domain.Cell] -> Domain.Cell -> [Int] -> [Domain.Grid] -> [Domain.Grid]
-guessHelper _ _ _ [] acc = acc
-guessHelper grid cells cell (x:xs) acc = guessHelper grid cells cell xs $ acc ++ [grid']
-  where cell' = Domain.Cell
-                  (Domain.cellId cell)
-                  (Domain.row cell)
-                  (Domain.col cell)
-                  x
-                  (Domain.userValue cell)
-                  (Domain.revealed cell)
-        grid' = Domain.Grid
-                  (Domain.gridId grid)
-                  (cells ++ [cell'])
-                  False
+guessHelper :: [Domain.Cell] -> Domain.Cell -> [[Domain.Cell]]
+guessHelper cells cell = [cells ++ [guess] | guess <- map makeGuess [1..9]]
+  where makeGuess guess = Domain.Cell
+          (Domain.cellId cell)
+          (Domain.row cell)
+          (Domain.col cell)
+          guess
+          (Domain.userValue cell)
+          (Domain.revealed cell)
 
 -- | Returns a solved grid, if any exists.
 getSolvedGrid :: [Maybe Domain.Grid] -> Maybe Domain.Grid
 getSolvedGrid = foldr f Nothing
-  where f (Just g) _ = Just g
-        f _ (Just g) = Just g
+  where f _ (Just g) = Just g
+        f (Just g) _ = Just g
         f _ _ = Nothing
 
 -- | Returns an empty cell, if any exists.
