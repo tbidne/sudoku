@@ -1,11 +1,9 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Service.InternalSpec
 ( spec
 )
 where
 
-import           Test.Hspec          (before, describe, it, Spec, SpecWith, shouldBe, shouldSatisfy, shouldContain)
+import           Test.Hspec          (before, describe, it, Spec, SpecWith, shouldBe, shouldSatisfy)
 import           Data.Maybe          (fromJust, isJust)
 import           Data.Text.Lazy      (pack, toLower)
 import qualified Domain              (Cell(..), Grid(..))
@@ -72,15 +70,15 @@ specWithTravisEnv = do
       let results = allGuessesForCell grid cell
 
       length results `shouldBe` 9
-      results `shouldContain` [copyGridWithGuessedCell grid 1]
-      results `shouldContain` [copyGridWithGuessedCell grid 2]
-      results `shouldContain` [copyGridWithGuessedCell grid 3]
-      results `shouldContain` [copyGridWithGuessedCell grid 4]
-      results `shouldContain` [copyGridWithGuessedCell grid 5]
-      results `shouldContain` [copyGridWithGuessedCell grid 6]
-      results `shouldContain` [copyGridWithGuessedCell grid 7]
-      results `shouldContain` [copyGridWithGuessedCell grid 8]
-      results `shouldContain` [copyGridWithGuessedCell grid 9]
+      gridListContains results (copyGridWithGuessedCell grid 1) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 2) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 3) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 4) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 5) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 6) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 7) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 8) `shouldBe` True
+      gridListContains results (copyGridWithGuessedCell grid 9) `shouldBe` True
 
   describe "getSolvedGrid tests" $ do
     it "getSolvedGrid for empty list should return Nothing" $ \_ -> do
@@ -258,6 +256,9 @@ gridEquals :: Domain.Grid -> Domain.Grid -> Bool
 gridEquals one two = foldr ((&&) . findByIdAndCompareVal cellsOne) True cellsTwo
   where cellsOne = Domain.cells one
         cellsTwo = Domain.cells two
+
+gridListContains :: [Domain.Grid] -> Domain.Grid -> Bool
+gridListContains grids g = foldr ((||) . gridEquals g) False grids
 
 tripleToList :: (a, a, a) -> [a]
 tripleToList (a, b, c) = [a, b, c]

@@ -20,7 +20,18 @@ dependencies:
 
 library:
   source-dirs: src
-  default-extensions: OverloadedStrings
+  ghc-options:
+    - -O2
+    - -Wall
+    - -Werror
+    - -Wcompat
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wredundant-constraints
+    - -fwarn-tabs
+  default-extensions: 
+    - LambdaCase
+    - OverloadedStrings
   dependencies:
     - aeson
     - postgresql-simple
@@ -48,7 +59,9 @@ executables:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     - -fwarn-tabs
-    default-extensions: OverloadedStrings
+    default-extensions:
+      - LambdaCase
+      - OverloadedStrings
     dependencies:
     - aeson
     - postgresql-simple
@@ -74,7 +87,9 @@ tests:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     - -fwarn-tabs
-    default-extensions: OverloadedStrings
+    default-extensions:
+      - LambdaCase
+      - OverloadedStrings
     dependencies:
     - hspec
     - sudoku
@@ -95,7 +110,9 @@ tests:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     - -fwarn-tabs
-    default-extensions: OverloadedStrings
+    default-extensions:
+      - LambdaCase
+      - OverloadedStrings
     dependencies:
     - hspec
     - process

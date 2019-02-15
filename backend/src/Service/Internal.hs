@@ -134,7 +134,7 @@ allGuessesForCell grid empty = map newGrid allGuesses
           False
 
 guessHelper :: [Domain.Cell] -> Domain.Cell -> [[Domain.Cell]]
-guessHelper cells cell = [cells ++ [guess] | guess <- map makeGuess [1..9]]
+guessHelper cells cell = [guess : cells | guess <- map makeGuess [1..9]]
   where makeGuess guess = Domain.Cell
           (Domain.cellId cell)
           (Domain.row cell)
